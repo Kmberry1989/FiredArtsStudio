@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fired Arts Studio - Pottery, Classes, & More</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            overflow-x: hidden; 
+        }
+        .hero-bg {
+            background-color: #000000; 
+        }
+
+        .section-title {
+            font-size: 2.5rem; 
+            font-weight: 700;
+            margin-bottom: 1.5rem; 
+            color: #4A3F35; 
+        }
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .card:hover {
+            transform: translateY(-10px); 
+            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background-color: #C87E4F;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #AF6C42;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background-color: #6B4F4F;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #5A423D;
+            transform: translateY(-2px);
+        }
+        .btn-ai { 
+            background-color: #A855F7; 
+            color: white;
+            padding: 0.5rem 1rem; 
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 0.75rem; 
+        }
+        .btn-ai:hover {
+            background-color: #9333EA; 
+            transform: translateY(-2px);
+        }
+
+        .nav-link {
+            color: #E5E7EB; 
+            transition: color 0.3s ease, background-color 0.3s ease;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            white-space: nowrap;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #C87E4F; 
+            background-color: #4A3F35; 
+        }
+        *:focus-visible {
+            outline: 3px solid #C87E4F;
+            outline-offset: 2px;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F5F0E6;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C87E4F;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #AF6C42;
+        }
+        .gallery-img-container {
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .gallery-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.35s ease-out; 
+        }
+        .gallery-img-container img:hover {
+            transform: scale(1.1); 
+        }
+
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .float-in-item {
+            opacity: 0;
+            transform: translateY(30px); 
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+        .float-in-item.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .float-in-item.is-visible:nth-child(1) { transition-delay: 0.1s; }
+        .float-in-item.is-visible:nth-child(2) { transition-delay: 0.2s; }
+        .float-in-item.is-visible:nth-child(3) { transition-delay: 0.3s; }
+        .float-in-item.is-visible:nth-child(4) { transition-delay: 0.4s; }
+        .float-in-item.is-visible:nth-child(5) { transition-delay: 0.5s; }
+        .float-in-item.is-visible:nth-child(6) { transition-delay: 0.6s; }
+        .float-in-item.is-visible:nth-child(7) { transition-delay: 0.7s; }
+        .float-in-item.is-visible:nth-child(8) { transition-delay: 0.8s; }
+
+        .site-logo-container {
+            position: relative;
+            display: inline-block;
+        }
+        .site-logo { 
+            height: 180px; 
+            width: auto;
+            max-width: 90%; 
+            display: block; 
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            z-index: 1;
+        }
+        .footer-logo { 
+            height: 80px; 
+            width: auto;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        .footer-logo:hover {
+            opacity: 1;
+        }
+
+        .flame-effect {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120%; 
+            height: 100%; 
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(18px); 
+        }
+        .flame-effect div {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0;
+            animation: flamePulse 3.5s infinite ease-in-out;
+        }
+        .flame-effect .flicker-1 {
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,200,0,0.45) 0%, rgba(255,165,0,0.25) 45%, rgba(255,100,0,0) 70%);
+            animation-delay: 0s;
+        }
+        .flame-effect .flicker-2 {
+            width: 85%;
+            height: 85%;
+            top: 7.5%;
+            left: 7.5%;
+            background: radial-gradient(circle, rgba(255,165,0,0.55) 0%, rgba(255,100,0,0.35) 45%, rgba(255,69,0,0) 70%);
+            animation-delay: -0.7s; 
+        }
+        .flame-effect .flicker-3 {
+            width: 70%;
+            height: 70%;
+            top: 15%;
+            left: 15%;
+            background: radial-gradient(circle, rgba(255,120,0,0.65) 0%, rgba(255,80,0,0.45) 45%, rgba(255,0,0,0) 70%);
+            animation-delay: -1.4s; 
+        }
+
+        @keyframes flamePulse {
+            0%, 100% { opacity: 0.3; transform: scale(0.95); }
+            30% { opacity: 0.75; transform: scale(1.05); }
+            60% { opacity: 0.4; transform: scale(1); }
+            80% { opacity: 0.65; transform: scale(1.02); }
+        }
+
+        .modal {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal.is-visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            color: #6B7280; 
+            cursor: pointer;
+        }
+        .modal-close:hover {
+            color: #1F2937; 
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3; 
+            border-top: 4px solid #C87E4F; 
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 1rem auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .message-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.5s ease, top 0.5s ease;
+        }
+        .message-box.success { background-color: #10B981; } 
+        .message-box.error { background-color: #EF4444; } 
+        .message-box.info { background-color: #3B82F6; } 
+        .message-box.show {
+            opacity: 1;
+            top: 30px;
+        }
+
+
+        @media (max-width: 768px) { 
+            .site-logo { 
+                height: 140px; 
+            }
+            .flame-effect {
+                width: 130%; 
+                height: 100%;
+                filter: blur(15px); 
+            }
+            #main-nav { 
+                justify-content: center; 
+            }
+            .nav-link {
+                padding: 0.4rem 0.6rem; 
+                font-size: 0.9rem; 
+            }
+        }
+        @media (max-width: 480px) { 
+             .site-logo { 
+                height: 100px;
+            }
+            .flame-effect {
+                width: 120%; 
+                height: 100%;
+                filter: blur(12px);
+            }
+            .nav-link {
+                padding: 0.3rem 0.4rem;
+                font-size: 0.85rem;
+            }
+        }
+
+    </style>
+</head>
+<body class="bg-[#FBF9F6] text-[#4A3F35]"> 
+
+    <header class="bg-black shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 py-2 flex justify-center items-center"> 
+            <nav id="main-nav" class="flex flex-wrap justify-center items-center space-x-1 sm:space-x-2">
+                <a href="#home" class="nav-link active" aria-current="page">Home</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#classes" class="nav-link">Classes</a>
+                <a href="#parties" class="nav-link">Parties</a>
+                <a href="#gallery" class="nav-link">Gallery</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <div id="logo-area" class="bg-black border-2 border-white py-6 text-center shadow-sm">
+        <div class="site-logo-container">
+            <a href="#home" aria-label="Fired Arts Studio Home">
+                <img src="https://imgur.com/TOtRXA0.png" alt="Fired Arts Studio Logo" class="site-logo drop-shadow-lg">
+            </a>
+            <div class="flame-effect">
+                <div class="flicker-1"></div>
+                <div class="flicker-2"></div>
+                <div class="flicker-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <section id="home" class="hero-bg text-white min-h-[70vh] flex items-center justify-center">
+        <div class="bg-black/60 p-8 md:p-16 rounded-lg text-center max-w-3xl mx-auto fade-in-section"> 
+            <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">Shape Your Creativity</h1>
+            <p class="text-lg md:text-xl mb-8">Discover the joy of pottery and canvas painting at Fired Arts Studio. Join our classes, host a unique party, or explore our gallery of handcrafted art.</p>
+            <a href="#classes" class="btn-primary text-lg px-8 py-3">Explore Classes & Workshops</a>
+        </div>
+    </section>
+
+    <main class="container mx-auto px-6 py-12 md:py-20">
+
+        <section id="about" class="mb-16 md:mb-24 scroll-mt-20 fade-in-section">
+            <h2 class="section-title text-center">Welcome to Fired Arts Studio</h2>
+            <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+                <div class="float-in-item"> 
+                    <img src="https://i.imgur.com/KojWtUd.jpeg" 
+                         alt="Shelves stocked with a wide variety of unfinished pottery (bisque) for customers to choose at Fired Arts Studio" 
+                         class="rounded-lg shadow-xl w-full h-auto object-cover"
+                         onerror="this.onerror=null;this.src='https://placehold.co/600x400/D1C2B3/4A3F35?text=Our+Studio+Shelves';">
+                </div>
+                <div class="text-lg text-[#6B4F4F] space-y-4 float-in-item" style="transition-delay: 0.2s;"> 
+                    <p>Welcome to Fired Arts Studio, Kokomo's premier paint-your-own-pottery and creative arts center! We believe in the transformative power of art and provide a welcoming space for everyone, from curious beginners to seasoned artists, to explore their creativity.</p>
+                    <p>Founded with a passion for art and community, we offer a wide selection of pre-fired bisque (as you can see!), engaging workshops for pottery and canvas painting, and open studio time. Our experienced and friendly staff are dedicated to guiding you through your artistic journey.</p>
+                    <p>Come join our vibrant community, get your hands dirty with clay or pick up a brush for canvas, and create something beautiful and unique!</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="services" class="mb-16 md:mb-24 scroll-mt-20 fade-in-section">
+            <h2 class="section-title text-center">What We Offer</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div id="classes" class="card bg-white p-8 rounded-xl shadow-lg text-center scroll-mt-20 float-in-item">
+                    <div class="text-5xl text-[#C87E4F] mb-6"><i class="fas fa-chalkboard-teacher"></i></div>
+                    <h3 class="text-2xl font-semibold mb-3 text-[#4A3F35]">Workshops & Events</h3>
+                    <p class="text-[#6B4F4F] mb-6">Explore pottery techniques, canvas painting, and more in our guided workshops for all ages. Check our calendar for special events!</p>
+                    <div class="mt-auto">
+                        <a href="#contact" class="btn-secondary block">View Schedule & Book</a>
+                    </div>
+                </div>
+                <div id="parties" class="card bg-white p-8 rounded-xl shadow-lg text-center scroll-mt-20 float-in-item">
+                    <div class="text-5xl text-[#C87E4F] mb-6"><i class="fas fa-birthday-cake"></i></div>
+                    <h3 class="text-2xl font-semibold mb-3 text-[#4A3F35]">Creative Parties</h3>
+                    <p class="text-[#6B4F4F] mb-6">Host a memorable event! Perfect for birthdays, team building, or a fun get-together. Choose pottery or canvas painting for your group.</p>
+                    <div class="mt-auto">
+                        <a href="#contact" class="btn-secondary block mb-2">Plan Your Party</a>
+                        <button id="getPartyIdeasBtn" class="btn-ai block w-full">✨ Get Party Ideas</button>
+                    </div>
+                </div>
+                <div id="gallery" class="card bg-white p-8 rounded-xl shadow-lg text-center scroll-mt-20 float-in-item">
+                    <div class="text-5xl text-[#C87E4F] mb-6"><i class="fas fa-paint-brush"></i></div> 
+                    <h3 class="text-2xl font-semibold mb-3 text-[#4A3F35]">Art Activities</h3>
+                    <p class="text-[#6B4F4F] mb-6">Paint your own pottery from our huge selection of bisque, or express yourself on canvas. All supplies provided!</p>
+                    <div class="mt-auto">
+                        <a href="#gallery-preview" class="btn-secondary block mb-2">See Artwork Examples</a>
+                        <button id="getProjectInspirationBtn" class="btn-ai block w-full">✨ Get Project Inspiration</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="gallery-preview" class="mb-16 md:mb-24 scroll-mt-20 fade-in-section">
+            <h2 class="section-title text-center">Canvas Painting Highlights</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                <div class="gallery-img-container float-in-item">
+                    <img src="https://i.imgur.com/LvuzqoQ.jpeg" 
+                         alt="Colorful floral canvas painting" 
+                         onerror="this.onerror=null;this.src='https://placehold.co/400x400/ABCEA1/4A3F35?text=Canvas+Art+1';">
+                </div>
+                <div class="gallery-img-container float-in-item">
+                    <img src="https://i.imgur.com/imw20I4.jpeg" 
+                         alt="Abstract landscape canvas painting" 
+                         onerror="this.onerror=null;this.src='https://placehold.co/400x400/A1B2CE/4A3F35?text=Canvas+Art+2';">
+                </div>
+                <div class="gallery-img-container float-in-item">
+                    <img src="https://i.imgur.com/QxcKtEF.jpeg" 
+                         alt="Whimsical animal canvas painting" 
+                         onerror="this.onerror=null;this.src='https://placehold.co/400x400/CEA1A1/4A3F35?text=Canvas+Art+3';">
+                </div>
+                <div class="gallery-img-container float-in-item">
+                    <img src="https://i.imgur.com/OaRU4VT.jpeg" 
+                         alt="Sunset scene canvas painting" 
+                         onerror="this.onerror=null;this.src='https://placehold.co/400x400/CEBFA1/4A3F35?text=Canvas+Art+4';">
+                </div>
+                <div class="gallery-img-container float-in-item">
+                    <img src="https://i.imgur.com/E0bfafr.jpeg" 
+                         alt="Modern abstract canvas art" 
+                         onerror="this.onerror=null;this.src='https://placehold.co/400x400/A1CECE/4A3F35?text=Canvas+Art+5';">
+                </div>
+                <div class="gallery-img-container float-in-item">
+                    <img src="https://i.imgur.com/HiZDmlI.jpeg" 
+                         alt="Nature inspired canvas painting" 
+                         onerror="this.onerror=null;this.src='https://placehold.co/400x400/C3A1CE/4A3F35?text=Canvas+Art+6';">
+                </div>
+                 <div class="gallery-img-container float-in-item">
+                    <img src="https://i.imgur.com/1ZrggKy.jpeg" 
+                         alt="Vibrant cityscape canvas painting" 
+                         onerror="this.onerror=null;this.src='https://placehold.co/400x400/CEC8A1/4A3F35?text=Canvas+Art+7';">
+                </div>
+                 <div class="gallery-img-container float-in-item">
+                    <img src="https://i.imgur.com/eQLOiA8.jpeg" 
+                         alt="Playful character canvas painting" 
+                         onerror="this.onerror=null;this.src='https://placehold.co/400x400/A1A9CE/4A3F35?text=Canvas+Art+8';">
+                </div>
+            </div>
+            <div class="text-center mt-8 float-in-item"> 
+                 <a href="#" class="btn-primary">View Full Gallery (Coming Soon)</a>
+                 <p class="text-sm mt-2 text-[#6B4F4F]">Explore more pottery and canvas creations in our studio!</p>
+            </div>
+        </section>
+
+        <section id="contact" class="bg-white p-8 md:p-12 rounded-xl shadow-xl scroll-mt-20 fade-in-section">
+            <h2 class="section-title text-center">Get In Touch</h2>
+            <div class="grid md:grid-cols-2 gap-8 md:gap-12">
+                <div class="float-in-item"> 
+                    <h3 class="text-2xl font-semibold mb-4 text-[#4A3F35]">Contact Us</h3>
+                    <p class="text-[#6B4F4F] mb-2"><i class="fas fa-map-marker-alt mr-2 text-[#C87E4F]"></i>111 West Sycamore Street, Kokomo, IN 46901</p>
+                    <p class="text-[#6B4F4F] mb-2"><i class="fas fa-phone-alt mr-2 text-[#C87E4F]"></i>(765) 450-3088</p>
+                    <p class="text-[#6B4F4F] mb-4"><i class="fas fa-envelope mr-2 text-[#C87E4F]"></i>Admin@firedartsstudio.com</p>
+                    
+                    <h3 class="text-2xl font-semibold mt-6 mb-3 text-[#4A3F35]">Studio Hours</h3>
+                    <div class="text-[#6B4F4F] space-y-2">
+                        <p><strong class="w-28 inline-block">Mon:</strong> Closed</p>
+                        <p><strong class="w-28 inline-block">Tue - Thu:</strong> 11 AM - 8 PM</p>
+                        <p><strong class="w-28 inline-block">Fri - Sat:</strong> 10 AM - 9 PM</p>
+                        <p><strong class="w-28 inline-block">Sun:</strong> 12 PM - 5 PM</p>
+                    </div>
+                </div>
+                <form id="contactForm" class="space-y-6 float-in-item" style="transition-delay: 0.2s;"> 
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-[#4A3F35]">Full Name</label>
+                        <input type="text" name="name" id="name" autocomplete="name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#C87E4F] focus:border-[#C87E4F] sm:text-sm placeholder-gray-400" placeholder="Your Name">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-[#4A3F35]">Email Address</label>
+                        <input type="email" name="email" id="email" autocomplete="email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#C87E4F] focus:border-[#C87E4F] sm:text-sm placeholder-gray-400" placeholder="you@example.com">
+                    </div>
+                    <div>
+                        <label for="subject" class="block text-sm font-medium text-[#4A3F35]">Subject</label>
+                        <input type="text" name="subject" id="subject" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#C87E4F] focus:border-[#C87E4F] sm:text-sm placeholder-gray-400" placeholder="Inquiry about workshops">
+                    </div>
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-[#4A3F35]">Message</label>
+                        <textarea id="message" name="message" rows="4" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#C87E4F] focus:border-[#C87E4F] sm:text-sm placeholder-gray-400" placeholder="Your message..."></textarea>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn-primary w-full">Send Message</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-black text-white/80 py-12">
+        <div class="container mx-auto px-6 text-center">
+            <div class="mb-4">
+                <a href="#home" aria-label="Fired Arts Studio Home">
+                     <img src="https://i.imgur.com/vwMPDbl.png" alt="Fired Arts Studio Footer Logo" class="footer-logo">
+                </a>
+            </div>
+            <div class="flex justify-center space-x-6 mb-6">
+                <a href="#" class="hover:text-white" aria-label="Facebook"><i class="fab fa-facebook-f text-xl"></i></a>
+                <a href="#" class="hover:text-white" aria-label="Instagram"><i class="fab fa-instagram text-xl"></i></a>
+                <a href="#" class="hover:text-white" aria-label="Pinterest"><i class="fab fa-pinterest-p text-xl"></i></a>
+            </div>
+            <nav class="flex flex-wrap justify-center space-x-4 mb-4 text-sm">
+                <a href="#home" class="hover:text-white">Home</a>
+                <a href="#about" class="hover:text-white">About</a>
+                <a href="#classes" class="hover:text-white">Classes</a>
+                <a href="#parties" class="hover:text-white">Parties</a>
+                <a href="#gallery" class="hover:text-white">Gallery</a>
+                <a href="#contact" class="hover:text-white">Contact</a>
+                <a href="#" class="hover:text-white">Privacy Policy</a>
+                <a href="#" class="hover:text-white">Terms of Service</a>
+            </nav>
+            <p class="text-sm">&copy; <span id="currentYear"></span> Fired Arts Studio. All rights reserved.</p>
+            </div>
+    </footer>
+
+    <div id="aiIdeaModal" class="modal">
+        <div class="modal-content relative">
+            <span class="modal-close" id="closeAiIdeaModal">&times;</span>
+            <h3 id="aiModalTitle" class="text-xl font-semibold mb-4 text-[#4A3F35]">Get Creative Ideas!</h3>
+            <label for="aiPromptInput" class="block text-sm font-medium text-[#4A3F35] mb-1">Describe your party or project theme:</label>
+            <input type="text" id="aiPromptInput" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#C87E4F] focus:border-[#C87E4F] sm:text-sm placeholder-gray-400" placeholder="e.g., 'kids space theme', 'relaxing nature art'">
+            <button id="generateAiIdeasBtn" class="btn-ai w-full mt-4">Generate Ideas</button>
+            <div id="aiIdeaResult" class="mt-4 text-[#6B4F4F] text-sm space-y-2">
+                </div>
+            <div id="aiLoadingIndicator" class="loader hidden mt-4"></div>
+        </div>
+    </div>
+
+
+    <script>
+        // Fallback for hero background image
+        const heroSection = document.getElementById('home');
+        if (heroSection) { 
+            const heroBgImg = new Image();
+            heroBgImg.src = 'http://www.firedartsstudio.com/uploads/1/2/5/6/125637914/editor/img-5499_1.jpeg';
+            heroBgImg.onerror = function() {
+                // No specific fallback needed if the primary style is solid black.
+            };
+        }
+
+        // Smooth scrolling for anchor links & active nav link highlighting
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId.length > 1) {
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        const headerElement = document.querySelector('header');
+                        const headerHeight = headerElement ? headerElement.offsetHeight : 0;
+                        const elementPosition = targetElement.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerHeight - 20; 
+
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: "smooth"
+                        });
+
+                        document.querySelectorAll('#main-nav a.nav-link').forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === targetId) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                }
+            });
+        });
+        
+        // Active nav link highlighting on scroll
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('#main-nav a.nav-link'); 
+        
+        function updateActiveNavLink() {
+            const headerElement = document.querySelector('header');
+            const headerHeight = headerElement ? headerElement.offsetHeight : 60; 
+            let current = 'home'; 
+
+            const logoArea = document.getElementById('logo-area');
+            const heroContentStart = heroSection ? heroSection.offsetTop : (logoArea ? logoArea.offsetTop + logoArea.offsetHeight : 0);
+
+            if (pageYOffset < heroContentStart - headerHeight - 30) {
+                current = 'home';
+            } else {
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - headerHeight - 30) { 
+                        current = section.getAttribute('id');
+                    }
+                });
+            }
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                const linkHref = link.getAttribute('href');
+                if (linkHref === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        window.addEventListener('scroll', updateActiveNavLink);
+        window.addEventListener('load', updateActiveNavLink); 
+
+
+        // Set current year in footer
+        const currentYearElement = document.getElementById('currentYear');
+        if (currentYearElement) {
+            currentYearElement.textContent = new Date().getFullYear();
+        }
+        
+        // Universal Message Display Function
+        function showMessage(message, type = 'info', duration = 4000) {
+            const existingMessageBox = document.querySelector('.message-box');
+            if (existingMessageBox) {
+                existingMessageBox.remove();
+            }
+
+            const messageBox = document.createElement('div');
+            messageBox.classList.add('message-box', type);
+            messageBox.textContent = message;
+            document.body.appendChild(messageBox);
+
+            setTimeout(() => {
+                messageBox.classList.add('show');
+            }, 10);
+
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(messageBox)) {
+                       document.body.removeChild(messageBox);
+                    }
+                }, 500);
+            }, duration);
+        }
+
+
+        // Form submission
+        const contactForm = document.getElementById('contactForm');
+        if(contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                showMessage('Thank you for your message! We will get back to you soon.', 'success');
+                contactForm.reset(); 
+            });
+        }
+
+        // Intersection Observer for animations
+        const animatedSections = document.querySelectorAll('.fade-in-section');
+        const animatedItems = document.querySelectorAll('.float-in-item');
+
+        const observerOptions = {
+            root: null, 
+            rootMargin: '0px',
+            threshold: 0.1 
+        };
+
+        const observerCallback = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target); 
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+        
+        animatedSections.forEach(section => {
+            observer.observe(section);
+        });
+        animatedItems.forEach(item => {
+            observer.observe(item);
+        });
+
+        const heroContent = document.querySelector('#home .fade-in-section');
+        if (heroContent) {
+            setTimeout(() => {
+                heroContent.classList.add('is-visible');
+            }, 100);
+        }
+
+        // AI Idea Generator Logic
+        const aiIdeaModal = document.getElementById('aiIdeaModal');
+        const closeAiIdeaModalBtn = document.getElementById('closeAiIdeaModal');
+        const getPartyIdeasBtn = document.getElementById('getPartyIdeasBtn');
+        const getProjectInspirationBtn = document.getElementById('getProjectInspirationBtn');
+        const generateAiIdeasBtn = document.getElementById('generateAiIdeasBtn');
+        const aiPromptInput = document.getElementById('aiPromptInput');
+        const aiIdeaResult = document.getElementById('aiIdeaResult');
+        const aiLoadingIndicator = document.getElementById('aiLoadingIndicator');
+        const aiModalTitle = document.getElementById('aiModalTitle');
+        let currentAiFeature = ''; 
+
+        function openAiModal(featureType, title, placeholder) {
+            currentAiFeature = featureType;
+            aiModalTitle.textContent = title;
+            aiPromptInput.placeholder = placeholder;
+            aiPromptInput.value = ''; 
+            aiIdeaResult.innerHTML = ''; 
+            aiIdeaModal.classList.add('is-visible');
+        }
+
+        if (getPartyIdeasBtn) {
+            getPartyIdeasBtn.addEventListener('click', () => {
+                openAiModal('party', '✨ Get Creative Party Ideas!', "e.g., 'kids space theme', 'adults relaxing night'");
+            });
+        }
+
+        if (getProjectInspirationBtn) {
+            getProjectInspirationBtn.addEventListener('click', () => {
+                openAiModal('project', '✨ Get Project Inspiration!', "e.g., 'nature pottery', 'abstract canvas', 'calm colors'");
+            });
+        }
+        
+        if (closeAiIdeaModalBtn) {
+            closeAiIdeaModalBtn.addEventListener('click', () => {
+                aiIdeaModal.classList.remove('is-visible');
+            });
+        }
+
+        if (aiIdeaModal) {
+            aiIdeaModal.addEventListener('click', (event) => {
+                if (event.target === aiIdeaModal) {
+                    aiIdeaModal.classList.remove('is-visible');
+                }
+            });
+        }
+
+
+        async function fetchAiIdeas(userInput) {
+            aiLoadingIndicator.classList.remove('hidden');
+            aiIdeaResult.innerHTML = '';
+            let promptText = "";
+
+            if (currentAiFeature === 'party') {
+                promptText = `Generate 3 creative and fun party theme ideas for Fired Arts Studio (a paint-your-own-pottery and canvas painting studio) based on the following user request: "${userInput}". For each idea, provide a catchy name and a brief 1-2 sentence description. Format each idea clearly.`;
+            } else if (currentAiFeature === 'project') {
+                promptText = `Generate 3 unique art project ideas suitable for Fired Arts Studio (pottery and canvas painting) based on this user input: "${userInput}". For each idea, suggest if it's better for pottery or canvas (or both), and give a short, inspiring description (1-2 sentences). Format each idea clearly.`;
+            }
+
+            if (!promptText) {
+                aiLoadingIndicator.classList.add('hidden');
+                showMessage('Error: Invalid feature type.', 'error');
+                return;
+            }
+            
+            let chatHistory = [{ role: "user", parts: [{ text: promptText }] }];
+            const payload = { contents: chatHistory };
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('API Error Response:', errorData);
+                    throw new Error(`API request failed with status ${response.status}: ${errorData.error?.message || 'Unknown error'}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+                    aiIdeaResult.innerHTML = `<p>${formattedText}</p>`;
+                } else {
+                    console.error('Unexpected API response structure:', result);
+                    aiIdeaResult.innerHTML = '<p>Sorry, I couldn\'t generate ideas at this time. The response from the AI was not as expected.</p>';
+                }
+            } catch (error) {
+                console.error('Error fetching AI ideas:', error);
+                aiIdeaResult.innerHTML = `<p>Sorry, I couldn't generate ideas at this time. Error: ${error.message}</p>`;
+                showMessage(`Error generating ideas: ${error.message}`, 'error');
+            } finally {
+                aiLoadingIndicator.classList.add('hidden');
+            }
+        }
+
+        if (generateAiIdeasBtn) {
+            generateAiIdeasBtn.addEventListener('click', () => {
+                const userInput = aiPromptInput.value.trim();
+                if (userInput) {
+                    fetchAiIdeas(userInput);
+                } else {
+                    showMessage('Please enter a description or theme for your ideas.', 'info');
+                }
+            });
+        }
+
+    </script>
+</body>
+</html>
