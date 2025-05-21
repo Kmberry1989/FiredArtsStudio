@@ -28,6 +28,13 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            height: 100%; 
+        }
+        .card-content {
+            flex-grow: 1; 
+        }
+        .card-actions {
+            margin-top: auto; 
         }
         .card:hover {
             transform: translateY(-10px); 
@@ -143,9 +150,25 @@
         .float-in-item.is-visible:nth-child(7) { transition-delay: 0.7s; }
         .float-in-item.is-visible:nth-child(8) { transition-delay: 0.8s; }
 
+        #logo-area {
+            position: relative; 
+            overflow: hidden; 
+        }
+        .logo-area-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            z-index: 0; 
+            opacity: 0.8; 
+        }
+
         .site-logo-container {
-            position: relative;
+            position: relative; 
             display: inline-block;
+            z-index: 1; 
         }
         .site-logo { 
             height: 180px; 
@@ -155,7 +178,7 @@
             margin-left: auto;
             margin-right: auto;
             position: relative;
-            z-index: 1;
+            z-index: 1; 
         }
         .footer-logo { 
             height: 80px; 
@@ -173,47 +196,51 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 120%; 
-            height: 100%; 
+            width: 130%; 
+            height: 130%;
             transform: translate(-50%, -50%);
-            z-index: 0;
+            z-index: 0; 
             pointer-events: none;
-            filter: blur(18px); 
+            filter: blur(20px); 
         }
         .flame-effect div {
             position: absolute;
             border-radius: 50%;
             opacity: 0;
-            animation: flamePulse 3.5s infinite ease-in-out;
+            animation: flamePulseEnhanced 4s infinite ease-in-out; 
         }
-        .flame-effect .flicker-1 {
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(255,200,0,0.45) 0%, rgba(255,165,0,0.25) 45%, rgba(255,100,0,0) 70%);
+        .flame-effect .flicker-1 { 
+            width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(255,200,0,0.6) 0%, rgba(255,165,0,0.4) 40%, rgba(255,100,0,0) 75%);
             animation-delay: 0s;
         }
-        .flame-effect .flicker-2 {
-            width: 85%;
-            height: 85%;
-            top: 7.5%;
-            left: 7.5%;
-            background: radial-gradient(circle, rgba(255,165,0,0.55) 0%, rgba(255,100,0,0.35) 45%, rgba(255,69,0,0) 70%);
-            animation-delay: -0.7s; 
+        .flame-effect .flicker-2 { 
+            width: 85%; height: 85%; top: 7.5%; left: 7.5%;
+            background: radial-gradient(circle, rgba(255,165,0,0.7) 0%, rgba(255,100,0,0.5) 40%, rgba(255,69,0,0) 75%);
+            animation-delay: -0.8s; 
         }
-        .flame-effect .flicker-3 {
-            width: 70%;
-            height: 70%;
-            top: 15%;
-            left: 15%;
-            background: radial-gradient(circle, rgba(255,120,0,0.65) 0%, rgba(255,80,0,0.45) 45%, rgba(255,0,0,0) 70%);
-            animation-delay: -1.4s; 
+        .flame-effect .flicker-3 { 
+            width: 70%; height: 70%; top: 15%; left: 15%;
+            background: radial-gradient(circle, rgba(255,220,50,0.7) 0%, rgba(255,180,0,0.5) 40%, rgba(255,120,0,0) 75%);
+            animation-delay: -1.6s; 
+        }
+        .flame-effect .flicker-blue { 
+            width: 90%; height: 90%; top: 5%; left: 5%;
+            background: radial-gradient(circle, rgba(0,150,255,0.35) 0%, rgba(0,100,200,0.2) 40%, rgba(0,50,150,0) 75%);
+            animation-delay: -0.4s;
+        }
+        .flame-effect .flicker-purple { 
+            width: 80%; height: 80%; top: 10%; left: 10%;
+            background: radial-gradient(circle, rgba(180,0,255,0.3) 0%, rgba(120,0,200,0.15) 40%, rgba(80,0,150,0) 75%);
+            animation-delay: -1.2s;
         }
 
-        @keyframes flamePulse {
-            0%, 100% { opacity: 0.3; transform: scale(0.95); }
-            30% { opacity: 0.75; transform: scale(1.05); }
-            60% { opacity: 0.4; transform: scale(1); }
-            80% { opacity: 0.65; transform: scale(1.02); }
+
+        @keyframes flamePulseEnhanced { 
+            0%, 100% { opacity: 0.4; transform: scale(0.9); }
+            25% { opacity: 0.9; transform: scale(1.1); }
+            50% { opacity: 0.5; transform: scale(0.95); }
+            75% { opacity: 1.0; transform: scale(1.05); }
         }
 
         .modal {
@@ -337,12 +364,14 @@
                 <a href="#classes" class="nav-link">Classes</a>
                 <a href="#parties" class="nav-link">Parties</a>
                 <a href="#gallery" class="nav-link">Gallery</a>
+                <a href="#painter-promo" class="nav-link">3D Painter</a>
                 <a href="#contact" class="nav-link">Contact</a>
             </nav>
         </div>
     </header>
 
     <div id="logo-area" class="bg-black border-2 border-white py-6 text-center shadow-sm">
+        <img src="https://i.imgur.com/pEIwC2W.jpeg" alt="Artistic background for logo" class="logo-area-background">
         <div class="site-logo-container">
             <a href="#home" aria-label="Fired Arts Studio Home">
                 <img src="https://imgur.com/TOtRXA0.png" alt="Fired Arts Studio Logo" class="site-logo drop-shadow-lg">
@@ -351,6 +380,8 @@
                 <div class="flicker-1"></div>
                 <div class="flicker-2"></div>
                 <div class="flicker-3"></div>
+                <div class="flicker-blue"></div>
+                <div class="flicker-purple"></div>
             </div>
         </div>
     </div>
@@ -387,32 +418,54 @@
             <div class="grid md:grid-cols-3 gap-8">
                 <div id="classes" class="card bg-white p-8 rounded-xl shadow-lg text-center scroll-mt-20 float-in-item">
                     <div class="text-5xl text-[#C87E4F] mb-6"><i class="fas fa-chalkboard-teacher"></i></div>
-                    <h3 class="text-2xl font-semibold mb-3 text-[#4A3F35]">Workshops & Events</h3>
-                    <p class="text-[#6B4F4F] mb-6">Explore pottery techniques, canvas painting, and more in our guided workshops for all ages. Check our calendar for special events!</p>
-                    <div class="mt-auto">
+                    <div class="card-content">
+                        <h3 class="text-2xl font-semibold mb-3 text-[#4A3F35]">Workshops & Events</h3>
+                        <p class="text-[#6B4F4F] mb-6">Explore pottery techniques, canvas painting, and more in our guided workshops for all ages. Check our calendar for special events!</p>
+                    </div>
+                    <div class="card-actions">
                         <a href="#contact" class="btn-secondary block">View Schedule & Book</a>
                     </div>
                 </div>
                 <div id="parties" class="card bg-white p-8 rounded-xl shadow-lg text-center scroll-mt-20 float-in-item">
                     <div class="text-5xl text-[#C87E4F] mb-6"><i class="fas fa-birthday-cake"></i></div>
-                    <h3 class="text-2xl font-semibold mb-3 text-[#4A3F35]">Creative Parties</h3>
-                    <p class="text-[#6B4F4F] mb-6">Host a memorable event! Perfect for birthdays, team building, or a fun get-together. Choose pottery or canvas painting for your group.</p>
-                    <div class="mt-auto">
+                     <div class="card-content">
+                        <h3 class="text-2xl font-semibold mb-3 text-[#4A3F35]">Creative Parties</h3>
+                        <p class="text-[#6B4F4F] mb-6">Host a memorable event! Perfect for birthdays, team building, or a fun get-together. Choose pottery or canvas painting for your group.</p>
+                    </div>
+                    <div class="card-actions">
                         <a href="#contact" class="btn-secondary block mb-2">Plan Your Party</a>
                         <button id="getPartyIdeasBtn" class="btn-ai block w-full">✨ Get Party Ideas</button>
                     </div>
                 </div>
                 <div id="gallery" class="card bg-white p-8 rounded-xl shadow-lg text-center scroll-mt-20 float-in-item">
                     <div class="text-5xl text-[#C87E4F] mb-6"><i class="fas fa-paint-brush"></i></div> 
-                    <h3 class="text-2xl font-semibold mb-3 text-[#4A3F35]">Art Activities</h3>
-                    <p class="text-[#6B4F4F] mb-6">Paint your own pottery from our huge selection of bisque, or express yourself on canvas. All supplies provided!</p>
-                    <div class="mt-auto">
+                     <div class="card-content">
+                        <h3 class="text-2xl font-semibold mb-3 text-[#4A3F35]">Art Activities</h3>
+                        <p class="text-[#6B4F4F] mb-6">Paint your own pottery from our huge selection of bisque, or express yourself on canvas. All supplies provided!</p>
+                    </div>
+                    <div class="card-actions">
                         <a href="#gallery-preview" class="btn-secondary block mb-2">See Artwork Examples</a>
                         <button id="getProjectInspirationBtn" class="btn-ai block w-full">✨ Get Project Inspiration</button>
                     </div>
                 </div>
             </div>
         </section>
+
+        <section id="painter-promo" class="mb-16 md:mb-24 scroll-mt-20 fade-in-section bg-white p-8 md:p-12 rounded-xl shadow-xl">
+            <h2 class="section-title text-center">Try Our Virtual 3D Painter!</h2>
+            <div class="text-center max-w-2xl mx-auto">
+                <img src="https://imgur.com/TOtRXA0.png" alt="Fairy model preview for 3D Painter" class="mx-auto mb-6 rounded-lg shadow-md h-48 w-auto"
+                     onerror="this.onerror=null;this.src='https://placehold.co/300x200/E2D8C5/4A3F35?text=3D+Painter+Preview';">
+                <p class="text-lg text-[#6B4F4F] mb-6">
+                    Unleash your creativity before you even step into the studio! Try our new 3D Fairy Painter to design your masterpiece virtually. Experiment with colors and techniques on a 3D model.
+                </p>
+                <a href="https://kmberry1989.github.io/FiredArtsStudio/3dpainter.html" target="_blank" class="btn-primary text-lg px-8 py-3 inline-block">
+                    Launch 3D Painter <i class="fas fa-external-link-alt ml-2"></i>
+                </a>
+                <p class="text-xs text-gray-500 mt-2">(Opens in a new tab)</p>
+            </div>
+        </section>
+
 
         <section id="gallery-preview" class="mb-16 md:mb-24 scroll-mt-20 fade-in-section">
             <h2 class="section-title text-center">Canvas Painting Highlights</h2>
@@ -524,6 +577,7 @@
                 <a href="#classes" class="hover:text-white">Classes</a>
                 <a href="#parties" class="hover:text-white">Parties</a>
                 <a href="#gallery" class="hover:text-white">Gallery</a>
+                <a href="#painter-promo" class="hover:text-white">3D Painter</a>
                 <a href="#contact" class="hover:text-white">Contact</a>
                 <a href="#" class="hover:text-white">Privacy Policy</a>
                 <a href="#" class="hover:text-white">Terms of Service</a>
@@ -596,9 +650,17 @@
             let current = 'home'; 
 
             const logoArea = document.getElementById('logo-area');
-            const heroContentStart = heroSection ? heroSection.offsetTop : (logoArea ? logoArea.offsetTop + logoArea.offsetHeight : 0);
+            const painterPromoSection = document.getElementById('painter-promo'); 
+            
+            let contentStartOffset = logoArea ? logoArea.offsetTop + logoArea.offsetHeight : 0;
+            if (painterPromoSection && painterPromoSection.offsetTop < contentStartOffset) {
+                contentStartOffset = painterPromoSection.offsetTop;
+            } else if (sections.length > 0 && sections[0].id !== 'home' && sections[0].offsetTop < contentStartOffset) {
+                contentStartOffset = sections[0].offsetTop;
+            }
 
-            if (pageYOffset < heroContentStart - headerHeight - 30) {
+
+            if (pageYOffset < contentStartOffset - headerHeight - 30) {
                 current = 'home';
             } else {
                 sections.forEach(section => {
