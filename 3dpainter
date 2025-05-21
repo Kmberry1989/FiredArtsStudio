@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>3D Fairy Painter - Fired Arts Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: 'Inter', sans-serif; background-color: #111827; }
+        #painter-container { 
+            width: 100vw; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            position: relative;
+            padding: 0.5rem;
+            box-sizing: border-box;
+        }
+        #canvas-container {
+            width: 100%;
+            max-width: 700px;
+            height: 55vh; 
+            min-height: 300px;
+            border: 1px solid #374151; 
+            border-radius: 0.5rem;
+            touch-action: none; 
+            cursor: crosshair;
+            background-color: #222222;
+        }
+        #controls-panel {
+            width: 100%;
+            max-width: 700px;
+            padding: 0.5rem;
+            background-color: #1F2937; 
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem; 
+            align-items: center;
+            overflow-y: auto;
+            max-height: calc(45vh - 5rem); 
+            margin-top: 0.5rem;
+        }
+        .controls-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #374151;
+        }
+        .controls-row:last-child {
+            border-bottom: none;
+        }
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.2rem 0.4rem;
+        }
+        label, .tool-label {
+            color: #D1D5DB; 
+            font-size: 0.8rem;
+            margin-right: 0.25rem;
+        }
+        .color-button, .tool-button {
+            width: 28px; 
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid #4B5563; 
+            cursor: pointer;
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.2);
+            transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #D1D5DB;
+        }
+        .color-button.active, .tool-button.active {
+            transform: scale(1.15);
+            box-shadow: 0 0 0 2px #60A5FA; 
+            border-color: #60A5FA;
+            color: #60A5FA;
+        }
+        .tool-button.speckle-active {
+             background-color: #C87E4F;
+             border-color: #AF6C42;
+             color: white;
+        }
+        input[type="color"] {
+            width: 32px;
+            height: 32px;
+            border: none;
+            padding: 0;
+            border-radius: 50%;
+            overflow: hidden;
+            cursor: pointer;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-color: transparent;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: 1px solid #4B5563; border-radius: 50%; }
+        input[type="color"]::-moz-color-swatch { border: 1px solid #4B5563; border-radius: 50%; }
+
+        input[type="range"] {
+            width: 100px;
+            accent-color: #C87E4F; 
+        }
+        #brush-size-visual-container {
+            width: 32px;
+            height: 32px;
+            background-color: #374151;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 0.25rem;
+            border: 1px solid #4B5563;
+        }
+        #brush-size-visual {
+            background-color: #9CA3AF;
+            border-radius: 50%;
+            transition: width 0.1s ease, height 0.1s ease;
+        }
+        #zoom-value {
+             color: #9CA3AF; 
+             font-size: 0.75rem;
+             min-width: 25px;
+             text-align: center;
+        }
+        #loading-message {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0,0,0,0.8);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            z-index: 100;
+            text-align: center;
+        }
+         #title-header {
+            color: #E5E7EB; 
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            margin-top: 0.5rem;
+         }
+        #camera-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: white;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 2000;
+            transition: opacity 0.1s ease-out;
+        }
+        #camera-flash.flash {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div id="painter-container">
+        <h1 id="title-header" class="text-xl sm:text-2xl font-bold">Paint Your Fairy!</h1>
+        <div id="canvas-container"></div>
+        <div id="controls-panel">
+            <div class="controls-row">
+                <div class="control-group">
+                    <span class="tool-label">Tool:</span>
+                    <button id="brush-tool-normal" class="tool-button active" title="Paint Brush"><i class="fas fa-paint-brush"></i></button>
+                    <button id="speckle-tool" class="tool-button ml-2" title="Toggle Speckles"><i class="fas fa-spray-can-sparkles"></i></button>
+                </div>
+                <div class="control-group">
+                    <label for="custom-color-picker" class="text-sm font-medium">Color:</label>
+                    <input type="color" id="custom-color-picker" value="#EF4444">
+                </div>
+                 <div class="control-group">
+                    <button class="color-button active" style="background-color: #EF4444;" data-color="#EF4444" title="Red"></button>
+                    <button class="color-button" style="background-color: #F59E0B;" data-color="#F59E0B" title="Amber"></button>
+                    <button class="color-button" style="background-color: #EAB308;" data-color="#EAB308" title="Yellow"></button>
+                    <button class="color-button" style="background-color: #10B981;" data-color="#10B981" title="Green"></button>
+                    <button class="color-button" style="background-color: #14B8A6;" data-color="#14B8A6" title="Teal"></button>
+                    <button class="color-button" style="background-color: #3B82F6;" data-color="#3B82F6" title="Blue"></button>
+                    <button class="color-button" style="background-color: #6366F1;" data-color="#6366F1" title="Indigo"></button>
+                    <button class="color-button" style="background-color: #8B5CF6;" data-color="#8B5CF6" title="Purple"></button>
+                    <button class="color-button" style="background-color: #EC4899;" data-color="#EC4899" title="Pink"></button>
+                    <button class="color-button" style="background-color: #A16207;" data-color="#A16207" title="Brown"></button>
+                    <button class="color-button" style="background-color: #4B5563;" data-color="#4B5563" title="Gray"></button>
+                    <button class="color-button" style="background-color: #000000;" data-color="#000000" title="Black"></button> 
+                    <button class="color-button" style="background-color: #FFFFFF; border: 1px solid #9CA3AF;" data-color="#FFFFFF" title="White"></button> 
+                </div>
+            </div>
+            <div class="controls-row">
+                <div class="control-group">
+                    <label for="brush-size-slider" class="text-sm font-medium">Brush:</label>
+                    <input type="range" id="brush-size-slider" min="1" max="50" value="10" class="align-middle">
+                    <div id="brush-size-visual-container">
+                        <div id="brush-size-visual"></div>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="zoom-slider" class="text-sm font-medium">Zoom:</label>
+                    <input type="range" id="zoom-slider" min="1.5" max="10" value="4" step="0.1" class="align-middle">
+                    <span id="zoom-value" class="text-sm ml-1 w-6 text-center">4.0</span>
+                </div>
+                <button id="clear-texture-btn" class="bg-gray-600 hover:bg-gray-500 text-gray-200 text-sm font-medium py-1.5 px-3 rounded-md">Clear</button>
+                <button id="save-image-btn" class="bg-green-600 hover:bg-green-500 text-white text-sm font-medium py-1.5 px-3 rounded-md ml-2">Save Design</button>
+            </div>
+        </div>
+    </div>
+    <div id="loading-message" class="hidden">Loading...</div>
+    <div id="camera-flash"></div>
+
+    <script>
+        console.log("DEBUG: Script execution started."); 
+
+        let scene, camera, renderer, orbitControls;
+        let paintableObject, modelContainer; // Changed mugPivot to modelContainer for clarity
+        let textureCanvas, textureContext, texture; 
+        let roughnessCanvas, roughnessContext, roughnessTexture; 
+        
+        let painting = false;
+        let canPaintThisStroke = false;
+        let isOrbiting = false;
+        let currentColor = '#EF4444'; 
+        let brushSize = 10; 
+        let customModelLoaded = false;
+        let speckleEffectActive = false;
+
+        const canvasContainer = document.getElementById('canvas-container');
+        const loadingMessage = document.getElementById('loading-message');
+        const customColorPicker = document.getElementById('custom-color-picker');
+        const cameraFlash = document.getElementById('camera-flash');
+        const speckleToolBtn = document.getElementById('speckle-tool');
+        const brushVisual = document.getElementById('brush-size-visual');
+
+        const customMugModelURL = 'https://raw.githubusercontent.com/Kmberry1989/FiredArtsStudio/a56156117d1a6d4c7ee72865204a77b46215a61a/Fairy.glb'; 
+
+        let colorClickSynth, shutterSound, paintStrokeSynth;
+
+        function setupSounds() {
+            try {
+                colorClickSynth = new Tone.Synth({
+                    oscillator: { type: "square" },
+                    envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.1 },
+                    volume: -20
+                }).toDestination();
+
+                shutterSound = () => {
+                    const noise = new Tone.NoiseSynth({
+                        noise: { type: "white" },
+                        envelope: { attack: 0.001, decay: 0.03, sustain: 0, release: 0.05 },
+                        volume: -10
+                    }).toDestination();
+                    const click = new Tone.MembraneSynth({
+                        pitchDecay: 0.008,
+                        octaves: 2,
+                        envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.1 },
+                        volume: -5
+                    }).toDestination();
+                    
+                    noise.triggerAttackRelease("32n", Tone.now());
+                    click.triggerAttackRelease("C4", "32n", Tone.now() + 0.01);
+                    
+                    setTimeout(() => { 
+                        noise.dispose();
+                        click.dispose();
+                    }, 200);
+                };
+
+                paintStrokeSynth = new Tone.NoiseSynth({
+                    noise: { type: "pink" },
+                    envelope: { attack: 0.005, decay: 0.05, sustain: 0.01, release: 0.05 },
+                    volume: -35 
+                }).toDestination();
+                 console.log("DEBUG: Tone.js sounds setup complete."); 
+            } catch (e) {
+                console.warn("Tone.js setup failed. Sounds will be disabled.", e);
+            }
+        }
+
+
+        async function init() {
+            console.log("DEBUG: init() called."); 
+            if (!canvasContainer) {
+                console.error("DEBUG: canvasContainer is null! Aborting init.");
+                loadingMessage.textContent = "Error: Canvas container not found.";
+                if(loadingMessage) loadingMessage.classList.remove('hidden');
+                return;
+            }
+            loadingMessage.textContent = "Initializing Scene...";
+            if(loadingMessage) loadingMessage.classList.remove('hidden');
+            
+            try {
+                await Tone.start(); 
+                setupSounds();
+            } catch (e) {
+                console.warn("Failed to start Tone.js AudioContext. Sounds might not work.", e);
+            }
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x2d3748); 
+            console.log("DEBUG: Scene created."); 
+
+            camera = new THREE.PerspectiveCamera(50, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 1000);
+            camera.position.set(0, 1, 5); // Adjusted camera for potentially larger/different model
+            console.log("DEBUG: Camera created."); 
+
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); 
+            renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            canvasContainer.appendChild(renderer.domElement);
+            console.log("DEBUG: Renderer created and appended."); 
+
+
+            scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+            const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.9);
+            scene.add(hemisphereLight);
+            const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight1.position.set(5, 10, 7);
+            scene.add(directionalLight1);
+            const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.5);
+            directionalLight2.position.set(-5, 8, -5);
+            scene.add(directionalLight2);
+            console.log("DEBUG: Lights added."); 
+
+            textureCanvas = document.createElement('canvas');
+            textureCanvas.width = 1024; 
+            textureCanvas.height = 1024;
+            textureContext = textureCanvas.getContext('2d');
+            textureContext.fillStyle = '#F0EAD6'; 
+            textureContext.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
+            texture = new THREE.CanvasTexture(textureCanvas);
+            texture.wrapS = THREE.RepeatWrapping; 
+            texture.wrapT = THREE.RepeatWrapping;
+            texture.minFilter = THREE.LinearMipmapLinearFilter;
+            texture.magFilter = THREE.LinearFilter;
+            texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+            texture.needsUpdate = true;
+
+            roughnessCanvas = document.createElement('canvas');
+            roughnessCanvas.width = 1024;
+            roughnessCanvas.height = 1024;
+            roughnessContext = roughnessCanvas.getContext('2d');
+            roughnessContext.fillStyle = 'white'; 
+            roughnessContext.fillRect(0, 0, roughnessCanvas.width, roughnessCanvas.height);
+            roughnessTexture = new THREE.CanvasTexture(roughnessCanvas);
+            roughnessTexture.wrapS = THREE.RepeatWrapping;
+            roughnessTexture.wrapT = THREE.RepeatWrapping;
+            roughnessTexture.minFilter = THREE.LinearMipmapLinearFilter;
+            roughnessTexture.magFilter = THREE.LinearFilter;
+            roughnessTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+            roughnessTexture.needsUpdate = true;
+            console.log("DEBUG: Textures created."); 
+
+
+            modelContainer = new THREE.Group(); // Use this to hold the loaded model or default mug
+            scene.add(modelContainer);
+            console.log("DEBUG: modelContainer added to scene."); 
+
+            
+            orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
+            orbitControls.enableDamping = true;
+            orbitControls.dampingFactor = 0.05;
+            orbitControls.screenSpacePanning = true; 
+            orbitControls.minDistance = 1; // Allow closer zoom
+            orbitControls.maxDistance = 20; // Allow further zoom
+            orbitControls.target.set(0, 0.5, 0); // Initial target, will be updated after model loads
+            console.log("DEBUG: OrbitControls setup."); 
+
+
+            if (customMugModelURL) { 
+                loadCustomModel(customMugModelURL);
+            } else {
+                console.log("DEBUG: customMugModelURL is null, creating default mug."); 
+                createDefaultMug(); 
+                setupControlsAndEvents(); 
+            }
+        }
+
+        function loadCustomModel(url) {
+            loadingMessage.textContent = "Loading Custom Model...";
+            if(loadingMessage) loadingMessage.classList.remove('hidden');
+            const loader = new THREE.GLTFLoader();
+            loader.load(url, (gltf) => {
+                console.log("DEBUG: Custom model loaded successfully from URL:", url); 
+                const model = gltf.scene;
+                
+                // Clear previous model from container if any
+                while(modelContainer.children.length > 0){ 
+                    modelContainer.remove(modelContainer.children[0]); 
+                }
+                paintableObject = null; // Reset paintable object
+
+                let BBox = new THREE.Box3().setFromObject(model);
+                let size = BBox.getSize(new THREE.Vector3());
+                let center = BBox.getCenter(new THREE.Vector3());
+
+                // Scale model
+                const maxDim = Math.max(size.x, size.y, size.z);
+                const scaleFactor = 2.5 / maxDim; // Target size of ~2.5 units
+                model.scale.set(scaleFactor, scaleFactor, scaleFactor);
+                
+                // Recalculate bounding box after scaling
+                BBox.setFromObject(model);
+                center = BBox.getCenter(new THREE.Vector3());
+                
+                // Center model at origin of modelContainer
+                model.position.sub(center);
+                
+                modelContainer.add(model);
+                orbitControls.target.set(0, 0, 0); // Target the center of the modelContainer
+                camera.lookAt(orbitControls.target);
+
+
+                let foundPaintableMesh = false;
+                model.traverse((child) => {
+                    if (child.isMesh) {
+                        console.log("DEBUG: Traversing mesh:", child.name);
+                        if (!foundPaintableMesh && child.geometry.attributes.uv) {
+                             // Assign the first mesh with UVs as the paintable object
+                            paintableObject = child;
+                            paintableObject.material = new THREE.MeshStandardMaterial({
+                                map: texture,
+                                roughnessMap: roughnessTexture,
+                                roughness: 1.0, 
+                                metalness: 0.1,
+                                name: "PaintableMaterial" // For debugging
+                            });
+                            console.log("DEBUG: Assigned paintableObject:", paintableObject.name);
+                            foundPaintableMesh = true;
+                        } else if (child.geometry.attributes.uv) {
+                            // For other meshes with UVs, you might want to give them a default non-paintable material
+                            // or try to preserve their original if it doesn't conflict
+                            console.log("DEBUG: Additional mesh found with UVs:", child.name);
+                        } else {
+                             console.warn("DEBUG: Mesh found without UVs, cannot be painted:", child.name);
+                        }
+                    }
+                });
+
+                if (!paintableObject) {
+                    console.error("Could not find any paintable mesh (with UVs) in the loaded model. Painting will not work.");
+                    loadingMessage.textContent = "Model loaded, but no paintable surface found. Check UVs.";
+                    // Keep the model visible, but painting won't work.
+                } else {
+                    customModelLoaded = true;
+                    console.log("DEBUG: Custom model processed. Paintable object:", paintableObject ? paintableObject.name : "None");
+                }
+                
+                if (!customModelLoaded) { // Fallback if something went wrong with custom model processing
+                    createDefaultMug();
+                }
+                setupControlsAndEvents();
+
+            }, 
+            (xhr) => { 
+                 loadingMessage.textContent = `Loading Model: ${Math.round(xhr.loaded / xhr.total * 100)}%`;
+            },
+            (error) => {
+                console.error('GLTFLoader Error:', error);
+                let detailedErrorMessage = 'An unknown error occurred while loading the model.';
+                if (error instanceof ErrorEvent) { 
+                    detailedErrorMessage = `Network error or CORS issue: ${error.message || 'No specific message.'}. Is the model URL correct and publicly accessible with CORS enabled?`;
+                } else if (error.message) { 
+                    detailedErrorMessage = error.message;
+                } else if (typeof error === 'object') { 
+                    try { detailedErrorMessage = `Error details: ${JSON.stringify(error)}`; } 
+                    catch (e) { detailedErrorMessage = 'Could not stringify error object.';}
+                }
+                console.error('Detailed error message for model loading:', detailedErrorMessage);
+                loadingMessage.textContent = `Error loading model. Using default. Check console.`;
+                createDefaultMug();
+                setupControlsAndEvents();
+            });
+        }
+
+        function createDefaultMug() {
+            loadingMessage.textContent = "Creating Default Mug...";
+             // Clear previous model from container if any
+            while(modelContainer.children.length > 0){ 
+                modelContainer.remove(modelContainer.children[0]); 
+            }
+            paintableObject = null;
+
+            const paintableMaterial = new THREE.MeshStandardMaterial({ 
+                map: texture,
+                roughnessMap: roughnessTexture,
+                roughness: 1.0, 
+                metalness: 0.05, 
+             });
+            const handleMaterial = new THREE.MeshStandardMaterial({
+                color: 0x555555,
+                roughness: 0.5,
+                metalness: 0.2
+            });
+
+            const mugRadius = 0.8;
+            const mugHeight = 2;
+            const mugSegments = 48;
+            const bodyGeometry = new THREE.CylinderGeometry(mugRadius, mugRadius * 0.9, mugHeight, mugSegments, 1, false);
+            paintableObject = new THREE.Mesh(bodyGeometry, paintableMaterial);
+            
+            const handleShape = new THREE.Shape();
+            handleShape.moveTo(0, 0);
+            handleShape.absarc(0, 0, 0.3, Math.PI * 0.9, -Math.PI * 0.9, true);
+            const extrudeSettings = { depth: 0.2, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 0.02, bevelThickness: 0.02 };
+            const handleGeometry = new THREE.ExtrudeGeometry(handleShape, extrudeSettings);
+            const mugHandle = new THREE.Mesh(handleGeometry, handleMaterial);
+            mugHandle.scale.set(1.8, 1.8, 1.8);
+            mugHandle.position.set(mugRadius - 0.1, mugHeight * 0.1, 0);
+            mugHandle.rotation.y = Math.PI / 2;
+            
+            modelContainer.add(paintableObject); // Add to the container
+            modelContainer.add(mugHandle);      // Add to the container
+            orbitControls.target.set(0, mugHeight / 2, 0); 
+            camera.lookAt(orbitControls.target); 
+            console.log("DEBUG: Default mug created and added to modelContainer."); 
+        }
+        
+        function setupControlsAndEvents(){
+            console.log("DEBUG: setupControlsAndEvents() called."); 
+            canvasContainer.addEventListener('pointerdown', onPointerDownCanvas);
+            canvasContainer.addEventListener('pointermove', onPointerMoveCanvas);
+            canvasContainer.addEventListener('pointerup', onPointerUpCanvas);
+            canvasContainer.addEventListener('pointerout', onPointerUpCanvas); 
+
+            document.getElementById('brush-tool-normal').addEventListener('click', () => {
+                 document.querySelectorAll('.tool-button').forEach(btn => {
+                     if(btn.id !== 'speckle-tool') btn.classList.remove('active');
+                });
+                document.getElementById('brush-tool-normal').classList.add('active');
+                canvasContainer.style.cursor = 'crosshair';
+                if (colorClickSynth) colorClickSynth.triggerAttackRelease("C5", "32n");
+            });
+            
+            speckleToolBtn.addEventListener('click', () => {
+                speckleEffectActive = !speckleEffectActive;
+                speckleToolBtn.classList.toggle('speckle-active', speckleEffectActive);
+                if (colorClickSynth) colorClickSynth.triggerAttackRelease("D5", "32n");
+            });
+
+
+            const colorButtons = document.querySelectorAll('.color-button');
+            colorButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    currentColor = button.dataset.color;
+                    customColorPicker.value = currentColor;
+                    colorButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    canvasContainer.style.cursor = 'crosshair';
+                    if (colorClickSynth) colorClickSynth.triggerAttackRelease("C6", "32n");
+                });
+            });
+            
+            customColorPicker.addEventListener('input', (event) => {
+                currentColor = event.target.value;
+                colorButtons.forEach(btn => btn.classList.remove('active'));
+                canvasContainer.style.cursor = 'crosshair';
+                if (colorClickSynth) colorClickSynth.triggerAttackRelease("C6", "32n");
+            });
+
+
+            const brushSizeSlider = document.getElementById('brush-size-slider');
+            brushSizeSlider.addEventListener('input', (event) => {
+                brushSize = parseInt(event.target.value);
+                updateBrushVisual(brushSize);
+            });
+            brushSize = parseInt(brushSizeSlider.value);
+            updateBrushVisual(brushSize);
+            
+            const zoomSlider = document.getElementById('zoom-slider');
+            const zoomValueDisplay = document.getElementById('zoom-value');
+            zoomSlider.addEventListener('input', (event) => {
+                const newDistance = parseFloat(event.target.value);
+                const direction = new THREE.Vector3();
+                camera.getWorldDirection(direction); 
+                const currentTarget = orbitControls.target.clone();
+                const newPosition = currentTarget.clone().sub(direction.multiplyScalar(newDistance));
+                camera.position.copy(newPosition);
+                zoomValueDisplay.textContent = newDistance.toFixed(1);
+                orbitControls.update();
+            });
+            const initialDistance = camera.position.distanceTo(orbitControls.target);
+            zoomSlider.value = initialDistance;
+            zoomValueDisplay.textContent = initialDistance.toFixed(1);
+
+            document.getElementById('clear-texture-btn').addEventListener('click', () => {
+                textureContext.fillStyle = '#F0EAD6'; 
+                textureContext.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
+                texture.needsUpdate = true;
+
+                roughnessContext.fillStyle = 'white'; 
+                roughnessContext.fillRect(0, 0, roughnessCanvas.width, roughnessCanvas.height);
+                roughnessTexture.needsUpdate = true;
+
+                if (colorClickSynth) colorClickSynth.triggerAttackRelease("A4", "16n");
+            });
+
+            document.getElementById('save-image-btn').addEventListener('click', saveImage);
+
+            window.addEventListener('resize', onWindowResize);
+            if(loadingMessage) loadingMessage.classList.add('hidden');
+            console.log("DEBUG: Controls and events setup complete. Starting animation loop."); 
+            animate();
+        }
+
+        function updateBrushVisual(size) {
+            const minSliderVal = 1;
+            const maxSliderVal = 50;
+            const minVisualSize = 2; 
+            const maxVisualSize = 28; 
+            
+            const visualDiameter = minVisualSize + ((size - minSliderVal) / (maxSliderVal - minSliderVal)) * (maxVisualSize - minVisualSize);
+            
+            brushVisual.style.width = `${Math.max(2, visualDiameter)}px`;
+            brushVisual.style.height = `${Math.max(2, visualDiameter)}px`;
+        }
+
+
+        function onWindowResize() {
+            if (!camera || !renderer || !canvasContainer) return;
+            camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+            console.log("DEBUG: Window resized."); 
+        }
+
+        const raycaster = new THREE.Raycaster();
+        const pointer = new THREE.Vector2();
+
+        function onPointerDownCanvas(event) {
+            if (isOrbiting) return; 
+            
+            updatePointerPosition(event);
+            raycaster.setFromCamera(pointer, camera);
+            const intersects = paintableObject ? raycaster.intersectObject(paintableObject, true) : []; 
+
+            if (intersects.length > 0) {
+                canPaintThisStroke = true; 
+                painting = true; 
+                paintOnMug(intersects[0].uv);
+                if (paintStrokeSynth) {
+                    paintStrokeSynth.triggerAttackRelease("16n", Tone.now());
+                }
+            } else {
+                canPaintThisStroke = false;
+            }
+        }
+
+        function onPointerMoveCanvas(event) {
+            if (!painting || !canPaintThisStroke || isOrbiting) return; 
+            updatePointerPosition(event);
+            paintOnMug();
+        }
+
+        function onPointerUpCanvas() {
+            painting = false;
+            canPaintThisStroke = false;
+        }
+
+        function updatePointerPosition(event) {
+            const rect = canvasContainer.getBoundingClientRect();
+            pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+        }
+        
+        function paintOnMug(initialUv = null) {
+            if (!paintableObject || isOrbiting) {
+                // console.log("DEBUG: Paint attempt skipped. Paintable object:", paintableObject, "Is Orbiting:", isOrbiting);
+                return;
+            }
+
+            let uvToPaint = initialUv;
+
+            if (!initialUv) {
+                raycaster.setFromCamera(pointer, camera);
+                const intersects = raycaster.intersectObject(paintableObject, true); 
+                if (intersects.length > 0 && intersects[0].uv) {
+                    uvToPaint = intersects[0].uv;
+                } else {
+                    return;
+                }
+            }
+            
+            if (uvToPaint) { 
+                const x = uvToPaint.x * textureCanvas.width;
+                const y = (1 - uvToPaint.y) * textureCanvas.height; 
+
+                textureContext.globalAlpha = 0.85; 
+                textureContext.fillStyle = currentColor;
+                
+                textureContext.beginPath();
+                textureContext.arc(x, y, brushSize * (textureCanvas.width / 200) , 0, 2 * Math.PI); 
+                textureContext.fill();
+                
+                if (speckleEffectActive) {
+                    const numSpeckles = Math.floor(brushSize / 3) + 2; 
+                    textureContext.fillStyle = 'rgba(30, 30, 30, 0.65)';
+                    for (let i = 0; i < numSpeckles; i++) {
+                        const offsetX = (Math.random() - 0.5) * brushSize * 1.8 * (textureCanvas.width / 200);
+                        const offsetY = (Math.random() - 0.5) * brushSize * 1.8 * (textureCanvas.width / 200);
+                        const speckleSize = Math.random() * 1.2 * (textureCanvas.width / 1024) + 0.4 * (textureCanvas.width / 1024);
+                        textureContext.beginPath();
+                        textureContext.arc(x + offsetX, y + offsetY, speckleSize, 0, 2 * Math.PI);
+                        textureContext.fill();
+                    }
+                }
+                textureContext.globalAlpha = 1.0; 
+                texture.needsUpdate = true; 
+
+                const glossValue = 20; 
+                roughnessContext.fillStyle = `rgb(${glossValue},${glossValue},${glossValue})`;
+                roughnessContext.beginPath();
+                roughnessContext.arc(x, y, brushSize * (textureCanvas.width / 200), 0, 2 * Math.PI);
+                roughnessContext.fill();
+                roughnessTexture.needsUpdate = true;
+            }
+        }
+        
+        function saveImage() {
+            if (shutterSound) shutterSound();
+            cameraFlash.classList.add('flash');
+            setTimeout(() => {
+                cameraFlash.classList.remove('flash');
+            }, 150); 
+
+            renderer.render(scene, camera); 
+            const dataURL = renderer.domElement.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.download = 'my-painted-fairy.png'; // Updated filename
+            link.href = dataURL;
+            link.click();
+        }
+
+
+        let lastFrameTime = 0; // DEBUG
+        function animate(currentTime) { // DEBUG: Pass currentTime for FPS calculation
+            requestAnimationFrame(animate);
+
+            // const delta = (currentTime - lastFrameTime) / 1000; // DEBUG: Calculate delta time
+            // lastFrameTime = currentTime; // DEBUG
+            // const fps = 1 / delta; // DEBUG
+            // if (frameCount % 120 === 0) console.log("DEBUG: FPS:", fps.toFixed(1)); // DEBUG
+
+            if (orbitControls) orbitControls.update(); 
+            if (renderer && scene && camera) {
+                 renderer.render(scene, camera);
+            }
+            // frameCount++; // DEBUG
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DEBUG: DOMContentLoaded event fired."); 
+            if (typeof THREE !== 'undefined' && typeof THREE.GLTFLoader !== 'undefined' && typeof THREE.OrbitControls !== 'undefined') {
+                console.log("DEBUG: Three.js and loaders appear to be defined."); 
+                init();
+            } else {
+                loadingMessage.textContent = "Error: Essential 3D libraries not loaded. Please check your internet connection and refresh.";
+                if(loadingMessage) loadingMessage.classList.remove('hidden');
+                console.error("THREE.js, GLTFLoader, or OrbitControls not found. Check script tags and network.");
+            }
+        });
+
+    </script>
+</body>
+</html>
