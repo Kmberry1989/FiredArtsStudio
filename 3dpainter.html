@@ -216,8 +216,8 @@
                 </div>
                 <div class="control-group">
                     <label for="zoom-slider" class="text-sm font-medium">Zoom:</label>
-                    <input type="range" id="zoom-slider" min="1.5" max="10" value="4" step="0.1" class="align-middle">
-                    <span id="zoom-value" class="text-sm ml-1 w-6 text-center">4.0</span>
+                    <input type="range" id="zoom-slider" min="1" max="15" value="5" step="0.1" class="align-middle">
+                    <span id="zoom-value" class="text-sm ml-1 w-6 text-center">5.0</span>
                 </div>
                 <button id="clear-texture-btn" class="bg-gray-600 hover:bg-gray-500 text-gray-200 text-sm font-medium py-1.5 px-3 rounded-md">Clear</button>
                 <button id="save-image-btn" class="bg-green-600 hover:bg-green-500 text-white text-sm font-medium py-1.5 px-3 rounded-md ml-2">Save Design</button>
@@ -231,7 +231,7 @@
         console.log("DEBUG: Script execution started."); 
 
         let scene, camera, renderer, orbitControls;
-        let paintableObject, modelContainer; // Changed mugPivot to modelContainer for clarity
+        let paintableObject, modelContainer; 
         let textureCanvas, textureContext, texture; 
         let roughnessCanvas, roughnessContext, roughnessTexture; 
         
@@ -250,7 +250,7 @@
         const speckleToolBtn = document.getElementById('speckle-tool');
         const brushVisual = document.getElementById('brush-size-visual');
 
-        const customMugModelURL = 'https://kmberry1989.github.io/FiredArtsStudio/Fairy.glb'; 
+        const customMugModelURL = 'https://github.com/Kmberry1989/FiredArtsStudio/raw/58859e35f4f27b3845ca373c5cb6b6b7e791e5ed/Fairy.glb'; 
 
         let colorClickSynth, shutterSound, paintStrokeSynth;
 
@@ -319,7 +319,7 @@
             console.log("DEBUG: Scene created."); 
 
             camera = new THREE.PerspectiveCamera(50, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 1000);
-            camera.position.set(0, 1, 5); // Adjusted camera for potentially larger/different model
+            camera.position.set(0, 1, 5); 
             console.log("DEBUG: Camera created."); 
 
 
@@ -371,7 +371,7 @@
             console.log("DEBUG: Textures created."); 
 
 
-            modelContainer = new THREE.Group(); // Use this to hold the loaded model or default mug
+            modelContainer = new THREE.Group(); 
             scene.add(modelContainer);
             console.log("DEBUG: modelContainer added to scene."); 
 
@@ -380,9 +380,18 @@
             orbitControls.enableDamping = true;
             orbitControls.dampingFactor = 0.05;
             orbitControls.screenSpacePanning = true; 
-            orbitControls.minDistance = 1; // Allow closer zoom
-            orbitControls.maxDistance = 20; // Allow further zoom
-            orbitControls.target.set(0, 0.5, 0); // Initial target, will be updated after model loads
+            orbitControls.minDistance = 1; 
+            orbitControls.maxDistance = 20; 
+            orbitControls.target.set(0, 0.5, 0); 
+            orbitControls.addEventListener('start', () => { 
+                isOrbiting = true; 
+                console.log("DEBUG: OrbitControls start");
+            });
+            orbitControls.addEventListener('end', () => { 
+                isOrbiting = false; 
+                canPaintThisStroke = false;
+                console.log("DEBUG: OrbitControls end");
+            });
             console.log("DEBUG: OrbitControls setup."); 
 
 
@@ -403,30 +412,26 @@
                 console.log("DEBUG: Custom model loaded successfully from URL:", url); 
                 const model = gltf.scene;
                 
-                // Clear previous model from container if any
                 while(modelContainer.children.length > 0){ 
                     modelContainer.remove(modelContainer.children[0]); 
                 }
-                paintableObject = null; // Reset paintable object
+                paintableObject = null;
 
                 let BBox = new THREE.Box3().setFromObject(model);
                 let size = BBox.getSize(new THREE.Vector3());
                 let center = BBox.getCenter(new THREE.Vector3());
 
-                // Scale model
                 const maxDim = Math.max(size.x, size.y, size.z);
-                const scaleFactor = 2.5 / maxDim; // Target size of ~2.5 units
+                const scaleFactor = 2.5 / maxDim; 
                 model.scale.set(scaleFactor, scaleFactor, scaleFactor);
                 
-                // Recalculate bounding box after scaling
-                BBox.setFromObject(model);
+                BBox.setFromObject(model); 
                 center = BBox.getCenter(new THREE.Vector3());
                 
-                // Center model at origin of modelContainer
-                model.position.sub(center);
+                model.position.sub(center); 
                 
                 modelContainer.add(model);
-                orbitControls.target.set(0, 0, 0); // Target the center of the modelContainer
+                orbitControls.target.set(0, 0, 0); 
                 camera.lookAt(orbitControls.target);
 
 
@@ -435,20 +440,17 @@
                     if (child.isMesh) {
                         console.log("DEBUG: Traversing mesh:", child.name);
                         if (!foundPaintableMesh && child.geometry.attributes.uv) {
-                             // Assign the first mesh with UVs as the paintable object
                             paintableObject = child;
                             paintableObject.material = new THREE.MeshStandardMaterial({
                                 map: texture,
                                 roughnessMap: roughnessTexture,
                                 roughness: 1.0, 
                                 metalness: 0.1,
-                                name: "PaintableMaterial" // For debugging
+                                name: "PaintableMaterial" 
                             });
                             console.log("DEBUG: Assigned paintableObject:", paintableObject.name);
                             foundPaintableMesh = true;
                         } else if (child.geometry.attributes.uv) {
-                            // For other meshes with UVs, you might want to give them a default non-paintable material
-                            // or try to preserve their original if it doesn't conflict
                             console.log("DEBUG: Additional mesh found with UVs:", child.name);
                         } else {
                              console.warn("DEBUG: Mesh found without UVs, cannot be painted:", child.name);
@@ -459,13 +461,12 @@
                 if (!paintableObject) {
                     console.error("Could not find any paintable mesh (with UVs) in the loaded model. Painting will not work.");
                     loadingMessage.textContent = "Model loaded, but no paintable surface found. Check UVs.";
-                    // Keep the model visible, but painting won't work.
                 } else {
                     customModelLoaded = true;
                     console.log("DEBUG: Custom model processed. Paintable object:", paintableObject ? paintableObject.name : "None");
                 }
                 
-                if (!customModelLoaded) { // Fallback if something went wrong with custom model processing
+                if (!customModelLoaded) { 
                     createDefaultMug();
                 }
                 setupControlsAndEvents();
@@ -494,7 +495,6 @@
 
         function createDefaultMug() {
             loadingMessage.textContent = "Creating Default Mug...";
-             // Clear previous model from container if any
             while(modelContainer.children.length > 0){ 
                 modelContainer.remove(modelContainer.children[0]); 
             }
@@ -528,8 +528,8 @@
             mugHandle.position.set(mugRadius - 0.1, mugHeight * 0.1, 0);
             mugHandle.rotation.y = Math.PI / 2;
             
-            modelContainer.add(paintableObject); // Add to the container
-            modelContainer.add(mugHandle);      // Add to the container
+            modelContainer.add(paintableObject); 
+            modelContainer.add(mugHandle);      
             orbitControls.target.set(0, mugHeight / 2, 0); 
             camera.lookAt(orbitControls.target); 
             console.log("DEBUG: Default mug created and added to modelContainer."); 
@@ -647,13 +647,18 @@
         const pointer = new THREE.Vector2();
 
         function onPointerDownCanvas(event) {
-            if (isOrbiting) return; 
+            if (isOrbiting) {
+                console.log("DEBUG: Pointer down ignored, orbiting.");
+                return;
+            }
             
             updatePointerPosition(event);
             raycaster.setFromCamera(pointer, camera);
             const intersects = paintableObject ? raycaster.intersectObject(paintableObject, true) : []; 
 
             if (intersects.length > 0) {
+                console.log("DEBUG: Paint stroke started on object.");
+                orbitControls.enabled = false; // Disable orbit controls when painting starts
                 canPaintThisStroke = true; 
                 painting = true; 
                 paintOnMug(intersects[0].uv);
@@ -662,6 +667,7 @@
                 }
             } else {
                 canPaintThisStroke = false;
+                console.log("DEBUG: Pointer down, but not on paintable object.");
             }
         }
 
@@ -672,8 +678,12 @@
         }
 
         function onPointerUpCanvas() {
+            if (painting) {
+                console.log("DEBUG: Paint stroke ended.");
+            }
             painting = false;
             canPaintThisStroke = false;
+            orbitControls.enabled = true; // Re-enable orbit controls
         }
 
         function updatePointerPosition(event) {
@@ -684,7 +694,6 @@
         
         function paintOnMug(initialUv = null) {
             if (!paintableObject || isOrbiting) {
-                // console.log("DEBUG: Paint attempt skipped. Paintable object:", paintableObject, "Is Orbiting:", isOrbiting);
                 return;
             }
 
@@ -745,26 +754,17 @@
             renderer.render(scene, camera); 
             const dataURL = renderer.domElement.toDataURL('image/png');
             const link = document.createElement('a');
-            link.download = 'my-painted-fairy.png'; // Updated filename
+            link.download = 'my-painted-fairy.png'; 
             link.href = dataURL;
             link.click();
         }
 
-
-        let lastFrameTime = 0; // DEBUG
-        function animate(currentTime) { // DEBUG: Pass currentTime for FPS calculation
+        function animate() {
             requestAnimationFrame(animate);
-
-            // const delta = (currentTime - lastFrameTime) / 1000; // DEBUG: Calculate delta time
-            // lastFrameTime = currentTime; // DEBUG
-            // const fps = 1 / delta; // DEBUG
-            // if (frameCount % 120 === 0) console.log("DEBUG: FPS:", fps.toFixed(1)); // DEBUG
-
             if (orbitControls) orbitControls.update(); 
             if (renderer && scene && camera) {
                  renderer.render(scene, camera);
             }
-            // frameCount++; // DEBUG
         }
         
         document.addEventListener('DOMContentLoaded', () => {
