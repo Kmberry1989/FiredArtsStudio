@@ -31,7 +31,7 @@
             border-radius: 0.5rem;
             touch-action: none; 
             cursor: crosshair;
-            background-color: #222222;
+            background-color: #222222; /* Background for the canvas div itself */
         }
         #controls-panel {
             width: 100%;
@@ -45,7 +45,7 @@
             gap: 0.5rem; 
             align-items: center;
             overflow-y: auto;
-            max-height: calc(45vh - 5rem); 
+            max-height: calc(45vh - 5rem); /* Adjust based on title and painter-container padding */
             margin-top: 0.5rem;
         }
         .controls-row {
@@ -84,15 +84,15 @@
             justify-content: center;
             align-items: center;
             font-size: 0.9rem;
-            color: #D1D5DB;
+            color: #D1D5DB; /* Icon color */
         }
-        .color-button.active, .tool-button.active {
+        .color-button.active, .tool-button.active { /* General active style for tools */
             transform: scale(1.15);
             box-shadow: 0 0 0 2px #60A5FA; 
             border-color: #60A5FA;
-            color: #60A5FA;
+            color: #60A5FA; /* Active icon color */
         }
-        .tool-button.speckle-active {
+        .tool-button.speckle-active { /* Specific style for active speckle, overrides general active if needed */
              background-color: #C87E4F;
              border-color: #AF6C42;
              color: white;
@@ -119,9 +119,9 @@
             accent-color: #C87E4F; 
         }
         #brush-size-visual-container {
-            width: 32px;
+            width: 32px; /* Container for visual */
             height: 32px;
-            background-color: #374151;
+            background-color: #374151; /* Darker background for contrast */
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -130,19 +130,19 @@
             border: 1px solid #4B5563;
         }
         #brush-size-visual {
-            background-color: #9CA3AF;
+            background-color: #9CA3AF; /* Color of the brush visual */
             border-radius: 50%;
             transition: width 0.1s ease, height 0.1s ease;
         }
         #zoom-value {
              color: #9CA3AF; 
              font-size: 0.75rem;
-             min-width: 25px;
+             min-width: 25px; /* Ensure space for value */
              text-align: center;
         }
         #loading-message {
             position: absolute;
-            top: 40%;
+            top: 40%; /* Adjusted for better visibility with controls */
             left: 50%;
             transform: translate(-50%, -50%);
             background-color: rgba(0,0,0,0.8);
@@ -237,7 +237,7 @@
         
         let painting = false;
         let canPaintThisStroke = false;
-        let isOrbiting = false;
+        // let isOrbiting = false; // No longer needed with direct orbitControls.enabled toggling
         let currentColor = '#EF4444'; 
         let brushSize = 10; 
         let customModelLoaded = false;
@@ -250,7 +250,7 @@
         const speckleToolBtn = document.getElementById('speckle-tool');
         const brushVisual = document.getElementById('brush-size-visual');
 
-        const customMugModelURL = 'https://kmberry1989.github.io/FiredArtsStudio/cat.glb'; 
+        const customMugModelURL = 'https://github.com/Kmberry1989/FiredArtsStudio/raw/58859e35f4f27b3845ca373c5cb6b6b7e791e5ed/Fairy.glb'; 
 
         let colorClickSynth, shutterSound, paintStrokeSynth;
 
@@ -383,15 +383,8 @@
             orbitControls.minDistance = 1; 
             orbitControls.maxDistance = 20; 
             orbitControls.target.set(0, 0.5, 0); 
-            orbitControls.addEventListener('start', () => { 
-                isOrbiting = true; 
-                console.log("DEBUG: OrbitControls start");
-            });
-            orbitControls.addEventListener('end', () => { 
-                isOrbiting = false; 
-                canPaintThisStroke = false;
-                console.log("DEBUG: OrbitControls end");
-            });
+            // Removed isOrbiting flag and direct event listeners for orbitControls start/end here
+            // We will manage orbitControls.enabled directly in pointer events.
             console.log("DEBUG: OrbitControls setup."); 
 
 
@@ -647,18 +640,12 @@
         const pointer = new THREE.Vector2();
 
         function onPointerDownCanvas(event) {
-            if (isOrbiting) {
-                console.log("DEBUG: Pointer down ignored, orbiting.");
-                return;
-            }
-            
             updatePointerPosition(event);
             raycaster.setFromCamera(pointer, camera);
             const intersects = paintableObject ? raycaster.intersectObject(paintableObject, true) : []; 
 
             if (intersects.length > 0) {
-                console.log("DEBUG: Paint stroke started on object.");
-                orbitControls.enabled = false; // Disable orbit controls when painting starts
+                orbitControls.enabled = false; // Disable controls if click is on the model
                 canPaintThisStroke = true; 
                 painting = true; 
                 paintOnMug(intersects[0].uv);
@@ -666,24 +653,21 @@
                     paintStrokeSynth.triggerAttackRelease("16n", Tone.now());
                 }
             } else {
+                orbitControls.enabled = true; // Enable controls if click is on background
                 canPaintThisStroke = false;
-                console.log("DEBUG: Pointer down, but not on paintable object.");
             }
         }
 
         function onPointerMoveCanvas(event) {
-            if (!painting || !canPaintThisStroke || isOrbiting) return; 
+            if (!painting || !canPaintThisStroke) return; // Only paint if mousedown started on model
             updatePointerPosition(event);
             paintOnMug();
         }
 
         function onPointerUpCanvas() {
-            if (painting) {
-                console.log("DEBUG: Paint stroke ended.");
-            }
             painting = false;
             canPaintThisStroke = false;
-            orbitControls.enabled = true; // Re-enable orbit controls
+            orbitControls.enabled = true; // Always re-enable orbit controls on pointer up
         }
 
         function updatePointerPosition(event) {
@@ -693,19 +677,17 @@
         }
         
         function paintOnMug(initialUv = null) {
-            if (!paintableObject || isOrbiting) {
-                return;
-            }
+            if (!paintableObject) return; // Guard: Ensure paintableObject exists
 
             let uvToPaint = initialUv;
 
-            if (!initialUv) {
+            if (!initialUv) { // If called from pointermove, raycast again
                 raycaster.setFromCamera(pointer, camera);
                 const intersects = raycaster.intersectObject(paintableObject, true); 
                 if (intersects.length > 0 && intersects[0].uv) {
                     uvToPaint = intersects[0].uv;
                 } else {
-                    return;
+                    return; // No intersection on move
                 }
             }
             
