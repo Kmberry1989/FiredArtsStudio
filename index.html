@@ -1,964 +1,420 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fired Arts Studio - Pottery, Classes, & More</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            scroll-behavior: smooth;
-            overflow-x: hidden; 
-            background-color: #000000; 
-            color: #E5E7EB; 
-        }
-        .hero-bg {
-            background-color: #000000; 
-        }
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fired Arts • Site with Immersive Background</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --edge:#ffffff1a; --panel:#0b0e14cc;
+    }
+    /* Background */
+    html,body{height:100%}
+    body{margin:0;background:#121212;font-family:Inter,system-ui,Segoe UI,Roboto,sans-serif;overflow:hidden}
+    canvas#bg{position:fixed;inset:0;z-index:-1;display:block}
+    .vignette{position:fixed;inset:0;pointer-events:none;z-index:0;
+      background:radial-gradient(120% 100% at 50% 65%, transparent 40%, rgba(0,0,0,.85) 100%);
+    }
+    .film{position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.12;background-image:
+      radial-gradient(1px 1px at 10% 20%, #ffffff22, transparent 40%),
+      radial-gradient(1px 1px at 70% 40%, #ffffff18, transparent 40%),
+      radial-gradient(1px 1px at 30% 80%, #ffffff12, transparent 40%),
+      repeating-linear-gradient(0deg, #00000003 0 1px, transparent 1px 3px)
+    }
+    .strobe{position:fixed;inset:0;background:#fff;opacity:0;mix-blend-mode:screen;pointer-events:none;z-index:1000}
+    @keyframes strobeFlash{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
+    .strobe.flash{animation:strobeFlash 460ms ease-out 1}
 
-        .section-title {
-            font-size: 2.5rem; 
-            font-weight: 700;
-            margin-bottom: 1.5rem; 
-            color: #F3F4F6; 
-        }
-        .card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100%; 
-            background-color: #1F2937; 
-            color: #D1D5DB; 
-        }
-        .card-content h3 {
-             color: #F9FAFB; 
-        }
-        .card-content p {
-            color: #9CA3AF; 
-        }
-        .card:hover {
-            transform: translateY(-10px); 
-            box-shadow: 0 15px 25px -5px rgba(200, 126, 79, 0.2), 0 8px 10px -6px rgba(200, 126, 79, 0.2); 
-        }
-        .btn-primary {
-            background-color: #C87E4F;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        .btn-primary:hover {
-            background-color: #AF6C42;
-            transform: translateY(-2px);
-        }
-        .btn-secondary {
-            background-color: #4A3F35; 
-            color: #E5E7EB;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        .btn-secondary:hover {
-            background-color: #6B4F4F; 
-            transform: translateY(-2px);
-        }
-        .btn-ai { 
-            background-color: #A855F7; 
-            color: white;
-            padding: 0.5rem 1rem; 
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            margin-top: 0.75rem; 
-        }
-        .btn-ai:hover {
-            background-color: #9333EA; 
-            transform: translateY(-2px);
-        }
+    /* Foreground site */
+    .site-wrap{position:relative; z-index:10; display:grid; place-items:center; height:100vh; padding:24px}
+    .site-card{
+      width:min(1200px, 95vw); height:min(92vh, 900px);
+      border-radius:18px; overflow:hidden; background:#0c0f16cc; border:1px solid var(--edge);
+      backdrop-filter:saturate(140%) blur(8px); box-shadow:0 30px 90px rgba(0,0,0,.6);
+    }
+    .site-iframe{width:100%; height:100%; border:0; background:#0a0d14}
+    .site-fallback{display:none; color:#d6def2; padding:18px}
+    .site-fallback a{color:#8bb7ff; text-decoration:underline}
 
-        .nav-link {
-            color: #E5E7EB; 
-            transition: color 0.3s ease, background-color 0.3s ease;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.375rem;
-            white-space: nowrap;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5); 
-        }
-        .nav-link:hover, .nav-link.active {
-            color: #C87E4F; 
-            background-color: rgba(74, 63, 53, 0.8); 
-        }
-        *:focus-visible {
-            outline: 3px solid #C87E4F;
-            outline-offset: 2px;
-        }
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #111827; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #C87E4F;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #AF6C42;
-        }
-        .gallery-img-container {
-            aspect-ratio: 1 / 1;
-            overflow: hidden;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        .gallery-img-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.35s ease-out; 
-        }
-        .gallery-img-container img:hover {
-            transform: scale(1.1); 
-        }
+    /* Topbar */
+    .topbar{position:fixed; left:16px; right:16px; top:16px; z-index:20; display:flex; gap:12px; align-items:center}
+    .brand{padding:10px 14px; border-radius:14px; background:linear-gradient(180deg,#12151d,#0b0d12);
+      border:1px solid var(--edge); color:#e7ecf5; font-weight:700; letter-spacing:.25px}
+    .pill{padding:10px 14px; border-radius:999px; background:linear-gradient(180deg,#0f1724,#0b0f17);
+      color:#cfe0ff; border:1px solid #ffffff1f; cursor:pointer; user-select:none;
+      box-shadow:0 6px 24px rgba(0,0,0,.35), 0 0 16px #5fb7ff1a inset; transition:transform .15s ease, box-shadow .15s ease;}
+    .pill:hover{transform:translateY(-1px); box-shadow:0 10px 28px rgba(0,0,0,.4), 0 0 28px #5fb7ff33 inset}
+    .hint{color:#a7b0c6; font-size:12px; margin-left:8px; opacity:.85}
 
-        .fade-in-section {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-        .fade-in-section.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .float-in-item {
-            opacity: 0;
-            transform: translateY(30px); 
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-        }
-        .float-in-item.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .float-in-item.is-visible:nth-child(1) { transition-delay: 0.1s; }
-        .float-in-item.is-visible:nth-child(2) { transition-delay: 0.2s; }
-        .float-in-item.is-visible:nth-child(3) { transition-delay: 0.3s; }
-        .float-in-item.is-visible:nth-child(4) { transition-delay: 0.4s; }
-        .float-in-item.is-visible:nth-child(5) { transition-delay: 0.5s; }
-        .float-in-item.is-visible:nth-child(6) { transition-delay: 0.6s; }
-        .float-in-item.is-visible:nth-child(7) { transition-delay: 0.7s; }
-        .float-in-item.is-visible:nth-child(8) { transition-delay: 0.8s; }
-
-        #logo-area {
-            position: relative; 
-            overflow: hidden; 
-        }
-        
-        .site-logo-container {
-            position: relative; 
-            display: inline-block;
-            z-index: 1; 
-        }
-        .site-logo { 
-            height: 180px; 
-            width: auto;
-            max-width: 90%; 
-            display: block; 
-            margin-left: auto;
-            margin-right: auto;
-            position: relative;
-            z-index: 1; 
-        }
-        .footer-logo { 
-            height: 80px; 
-            width: auto;
-            margin-left: auto;
-            margin-right: auto;
-            opacity: 0.8;
-            transition: opacity 0.3s ease;
-        }
-        .footer-logo:hover {
-            opacity: 1;
-        }
-
-        .flame-effect {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 130%; 
-            height: 130%;
-            transform: translate(-50%, -50%);
-            z-index: 0; 
-            pointer-events: none;
-            filter: blur(20px); 
-        }
-        .flame-effect div {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0;
-            animation: flamePulseEnhanced 4s infinite ease-in-out; 
-        }
-        .flame-effect .flicker-1 { 
-            width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(255,200,0,0.6) 0%, rgba(255,165,0,0.4) 40%, rgba(255,100,0,0) 75%);
-            animation-delay: 0s;
-        }
-        .flame-effect .flicker-2 { 
-            width: 85%; height: 85%; top: 7.5%; left: 7.5%;
-            background: radial-gradient(circle, rgba(255,165,0,0.7) 0%, rgba(255,100,0,0.5) 40%, rgba(255,69,0,0) 75%);
-            animation-delay: -0.8s; 
-        }
-        .flame-effect .flicker-3 { 
-            width: 70%; height: 70%; top: 15%; left: 15%;
-            background: radial-gradient(circle, rgba(255,220,50,0.7) 0%, rgba(255,180,0,0.5) 40%, rgba(255,120,0,0) 75%);
-            animation-delay: -1.6s; 
-        }
-        .flame-effect .flicker-blue { 
-            width: 90%; height: 90%; top: 5%; left: 5%;
-            background: radial-gradient(circle, rgba(0,150,255,0.35) 0%, rgba(0,100,200,0.2) 40%, rgba(0,50,150,0) 75%);
-            animation-delay: -0.4s;
-        }
-        .flame-effect .flicker-purple { 
-            width: 80%; height: 80%; top: 10%; left: 10%;
-            background: radial-gradient(circle, rgba(180,0,255,0.3) 0%, rgba(120,0,200,0.15) 40%, rgba(80,0,150,0) 75%);
-            animation-delay: -1.2s;
-        }
-
-
-        @keyframes flamePulseEnhanced { 
-            0%, 100% { opacity: 0.4; transform: scale(0.9); }
-            25% { opacity: 0.9; transform: scale(1.1); }
-            50% { opacity: 0.5; transform: scale(0.95); }
-            75% { opacity: 1.0; transform: scale(1.05); }
-        }
-
-        .modal {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        .modal.is-visible {
-            opacity: 1;
-            visibility: visible;
-        }
-        .modal-content {
-            background-color: #1F2937; 
-            color: #E5E7EB; 
-            padding: 2rem;
-            border-radius: 0.5rem;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        .modal-content label { color: #D1D5DB; }
-        .modal-content input[type="text"] {
-            background-color: #374151; 
-            color: #E5E7EB;
-            border-color: #4B5563;
-        }
-        .modal-content input[type="text"]::placeholder { color: #9CA3AF; }
-
-        .modal-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            font-size: 1.5rem;
-            color: #9CA3AF; 
-            cursor: pointer;
-        }
-        .modal-close:hover {
-            color: #F9FAFB; 
-        }
-
-        .loader {
-            border: 4px solid #374151; 
-            border-top: 4px solid #C87E4F; 
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 1rem auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .message-box {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 2000;
-            opacity: 0;
-            transition: opacity 0.5s ease, top 0.5s ease;
-        }
-        .message-box.success { background-color: #10B981; } 
-        .message-box.error { background-color: #EF4444; } 
-        .message-box.info { background-color: #3B82F6; } 
-        .message-box.show {
-            opacity: 1;
-            top: 30px;
-        }
-
-        /* Waving Glow Divider */
-        .glow-divider {
-            height: 5px; /* Slightly thicker for better visibility of wave */
-            width: 70%; /* Slightly narrower */
-            max-width: 500px;
-            margin: 3.5rem auto; /* Increased spacing */
-            position: relative;
-            border-radius: 3px;
-            overflow: hidden; /* Important for containing the animated gradient */
-        }
-        .glow-divider::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-size: 300% 100%; /* Make gradient wider than the element */
-            animation: waveGlow 4s linear infinite;
-            opacity: 0.8;
-        }
-        .glow-divider.blue::before { 
-            background-image: linear-gradient(90deg, 
-                transparent 0%, 
-                rgba(59, 130, 246, 0.1) 20%, /* Faded edge */
-                rgba(59, 130, 246, 0.8) 40%, /* Core color */
-                rgba(59, 130, 246, 0.8) 60%, /* Core color */
-                rgba(59, 130, 246, 0.1) 80%, /* Faded edge */
-                transparent 100%
-            );
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.5), 0 0 24px rgba(59, 130, 246, 0.3);
-        }
-        .glow-divider.red::before { 
-             background-image: linear-gradient(90deg, 
-                transparent 0%, 
-                rgba(239, 68, 68, 0.1) 20%, 
-                rgba(239, 68, 68, 0.8) 40%, 
-                rgba(239, 68, 68, 0.8) 60%, 
-                rgba(239, 68, 68, 0.1) 80%, 
-                transparent 100%
-            );
-            box-shadow: 0 0 12px rgba(239, 68, 68, 0.5), 0 0 24px rgba(239, 68, 68, 0.3);
-        }
-        .glow-divider.orange::before { 
-            background-image: linear-gradient(90deg, 
-                transparent 0%, 
-                rgba(245, 158, 11, 0.1) 20%, 
-                rgba(245, 158, 11, 0.8) 40%, 
-                rgba(245, 158, 11, 0.8) 60%, 
-                rgba(245, 158, 11, 0.1) 80%, 
-                transparent 100%
-            );
-            box-shadow: 0 0 12px rgba(245, 158, 11, 0.5), 0 0 24px rgba(245, 158, 11, 0.3);
-        }
-        .glow-divider.purple::before { 
-            background-image: linear-gradient(90deg, 
-                transparent 0%, 
-                rgba(168, 85, 247, 0.1) 20%, 
-                rgba(168, 85, 247, 0.8) 40%, 
-                rgba(168, 85, 247, 0.8) 60%, 
-                rgba(168, 85, 247, 0.1) 80%, 
-                transparent 100%
-            );
-            box-shadow: 0 0 12px rgba(168, 85, 247, 0.5), 0 0 24px rgba(168, 85, 247, 0.3);
-        }
-
-        @keyframes waveGlow {
-            0% { background-position: 150% 0; } /* Start off-screen to the right */
-            100% { background-position: -150% 0; } /* Move to off-screen to the left */
-        }
-
-
-        @media (max-width: 768px) { 
-            .site-logo { 
-                height: 140px; 
-            }
-            .flame-effect {
-                width: 130%; 
-                height: 100%;
-                filter: blur(15px); 
-            }
-            #main-nav { 
-                justify-content: center; 
-            }
-            .nav-link {
-                padding: 0.4rem 0.6rem; 
-                font-size: 0.9rem; 
-            }
-            .glow-divider {
-                margin: 2rem auto;
-            }
-        }
-        @media (max-width: 480px) { 
-             .site-logo { 
-                height: 100px;
-            }
-            .flame-effect {
-                width: 120%; 
-                height: 100%;
-                filter: blur(12px);
-            }
-            .nav-link {
-                padding: 0.3rem 0.4rem;
-                font-size: 0.85rem;
-            }
-             .section-title { font-size: 2rem; }
-        }
-
-    </style>
+    /* Socials panel */
+    .panel{position:fixed; top:0; right:0; height:100vh; width:min(420px,100vw);
+      background:var(--panel); border-left:1px solid var(--edge); backdrop-filter:saturate(140%) blur(12px);
+      z-index:30; transform:translateX(100%); transition:transform .32s cubic-bezier(.22,.8,.2,1); display:flex; flex-direction:column}
+    .panel.open{transform:translateX(0)}
+    .panel-header{display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--edge); color:#e9efff}
+    .panel-body{padding:14px 16px; overflow:auto}
+    .soc{display:grid; grid-template-columns:32px 1fr; gap:10px; align-items:center; padding:10px 6px; border-radius:12px; border:1px solid #ffffff12; margin-bottom:10px}
+    .soc a{color:#cfe0ff; text-decoration:none}
+    .soc a:hover{ text-decoration:underline }
+    .ico{width:26px; height:26px; display:grid; place-items:center; border-radius:7px; background:#0f1422; border:1px solid #ffffff14}
+  </style>
 </head>
-<body class="bg-black text-gray-200"> 
+<body>
+  <canvas id="bg"></canvas>
+  <div class="vignette"></div>
+  <div class="film"></div>
+  <div id="strobe" class="strobe"></div>
 
-    <div id="logo-area" class="bg-black py-6 text-center shadow-sm">
-        <div class="site-logo-container">
-            <a href="#home" aria-label="Fired Arts Studio Home">
-                <img src="https://imgur.com/TOtRXA0.png" alt="Fired Arts Studio Logo" class="site-logo drop-shadow-lg">
-            </a>
-            <div class="flame-effect">
-                <div class="flicker-1"></div>
-                <div class="flicker-2"></div>
-                <div class="flicker-3"></div>
-                <div class="flicker-blue"></div>
-                <div class="flicker-purple"></div>
-            </div>
-        </div>
-    </div>
+  <!-- Foreground website -->
+  <div class="topbar">
+    <div class="brand">Fired Arts Studio</div>
+    <button id="openSocials" class="pill">Open Socials</button>
+    <div class="hint">Scroll page = faster • Scroll up = slower</div>
+  </div>
 
-    <header class="shadow-md sticky top-0 z-50" style="background-image: url('https://i.imgur.com/VZxTAug.png'); background-size: cover; background-position: center;">
-        <div class="container mx-auto px-4 sm:px-6 py-2 flex justify-center items-center"> 
-            <nav id="main-nav" class="flex flex-wrap justify-center items-center space-x-1 sm:space-x-2">
-                <a href="#home" class="nav-link active" aria-current="page">Home</a>
-                <a href="#classes" class="nav-link">Classes</a>
-                <a href="#parties" class="nav-link">Parties</a>
-                <a href="#gallery" class="nav-link">Gallery</a>
-                <a href="#painter-promo" class="nav-link">3D Painter</a>
-                <a href="#contact" class="nav-link">Contact</a>
-            </nav>
-        </div>
-    </header>
-
-    <section id="home" class="hero-bg text-white min-h-[70vh] flex items-center justify-center">
-        <div class="bg-black/60 p-8 md:p-16 rounded-lg text-center max-w-3xl mx-auto fade-in-section"> 
-            <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">Shape Your Creativity</h1>
-            <p class="text-lg md:text-xl mb-8">Discover the joy of pottery and canvas painting at Fired Arts Studio. Join our classes, host a unique party, or explore our gallery of handcrafted art.</p>
-            <a href="#classes" class="btn-primary text-lg px-8 py-3">Explore Classes & Workshops</a>
-        </div>
+  <main class="site-wrap">
+    <section class="site-card">
+      <iframe id="siteFrame" class="site-iframe"
+        src="https://fired-arts-studio-ljn1rre5o-kyle-matthew-berry-s-projects.vercel.app/"
+        title="Fired Arts Studio Website"></iframe>
+      <div id="siteFallback" class="site-fallback">
+        We couldn’t embed the site (likely due to its security settings).
+        <a href="https://fired-arts-studio-ljn1rre5o-kyle-matthew-berry-s-projects.vercel.app/" target="_blank" rel="noopener">Open in a new tab ↗</a>
+      </div>
     </section>
+  </main>
 
-    <main class="container mx-auto px-6 py-12 md:py-20">
-        <div class="glow-divider blue"></div>
-        <section id="about" class="mb-16 md:mb-24 scroll-mt-20 fade-in-section">
-            <h2 class="section-title text-center">Welcome to Fired Arts Studio</h2>
-            <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-                <div class="float-in-item"> 
-                    <img src="https://i.imgur.com/KojWtUd.jpeg" 
-                         alt="Shelves stocked with a wide variety of unfinished pottery (bisque) for customers to choose at Fired Arts Studio" 
-                         class="rounded-lg shadow-xl w-full h-auto object-cover"
-                         onerror="this.onerror=null;this.src='https://placehold.co/600x400/D1C2B3/4A3F35?text=Our+Studio+Shelves';">
-                </div>
-                <div class="text-lg text-gray-300 space-y-4 float-in-item" style="transition-delay: 0.2s;"> 
-                    <p>Welcome to Fired Arts Studio, Kokomo's premier paint-your-own-pottery and creative arts center! We believe in the transformative power of art and provide a welcoming space for everyone, from curious beginners to seasoned artists, to explore their creativity.</p>
-                    <p>Founded with a passion for art and community, we offer a wide selection of pre-fired bisque (as you can see!), engaging workshops for pottery and canvas painting, and open studio time. Our experienced and friendly staff are dedicated to guiding you through your artistic journey.</p>
-                    <p>Come join our vibrant community, get your hands dirty with clay or pick up a brush for canvas, and create something beautiful and unique!</p>
-                </div>
-            </div>
-        </section>
-
-        <div class="glow-divider red"></div>
-        <section id="services" class="mb-16 md:mb-24 scroll-mt-20 fade-in-section">
-            <h2 class="section-title text-center">What We Offer</h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div id="classes" class="card scroll-mt-20 float-in-item">
-                    <div class="text-5xl text-[#C87E4F] mb-6 text-center"><i class="fas fa-chalkboard-teacher"></i></div>
-                    <div class="card-content p-6 text-center">
-                        <h3 class="text-2xl font-semibold mb-3">Workshops & Events</h3>
-                        <p class="mb-6">Explore pottery techniques, canvas painting, and more in our guided workshops for all ages. Check our calendar for special events!</p>
-                    </div>
-                    <div class="card-actions p-6 pt-0">
-                        <a href="#contact" class="btn-secondary block">View Schedule & Book</a>
-                    </div>
-                </div>
-                <div id="parties" class="card scroll-mt-20 float-in-item">
-                    <div class="text-5xl text-[#C87E4F] mb-6 text-center"><i class="fas fa-birthday-cake"></i></div>
-                     <div class="card-content p-6 text-center">
-                        <h3 class="text-2xl font-semibold mb-3">Creative Parties</h3>
-                        <p class="mb-6">Host a memorable event! Perfect for birthdays, team building, or a fun get-together. Choose pottery or canvas painting for your group.</p>
-                    </div>
-                    <div class="card-actions p-6 pt-0">
-                        <a href="#contact" class="btn-secondary block mb-2">Plan Your Party</a>
-                        <button id="getPartyIdeasBtn" class="btn-ai block w-full">✨ Get Party Ideas</button>
-                    </div>
-                </div>
-                <div id="gallery" class="card scroll-mt-20 float-in-item">
-                    <div class="text-5xl text-[#C87E4F] mb-6 text-center"><i class="fas fa-paint-brush"></i></div> 
-                     <div class="card-content p-6 text-center">
-                        <h3 class="text-2xl font-semibold mb-3">Art Activities</h3>
-                        <p class="mb-6">Paint your own pottery from our huge selection of bisque, or express yourself on canvas. All supplies provided!</p>
-                    </div>
-                    <div class="card-actions p-6 pt-0">
-                        <a href="#gallery-preview" class="btn-secondary block mb-2">See Artwork Examples</a>
-                        <button id="getProjectInspirationBtn" class="btn-ai block w-full">✨ Get Project Inspiration</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <div class="glow-divider orange"></div>
-        <section id="painter-promo" class="mb-16 md:mb-24 scroll-mt-20 fade-in-section bg-[#111827] p-8 md:p-12 rounded-xl shadow-xl">
-            <h2 class="section-title text-center">Try Our Virtual 3D Painter!</h2>
-            <div class="text-center max-w-2xl mx-auto">
-                <img src="https://imgur.com/TOtRXA0.png" alt="Fairy model preview for 3D Painter" class="mx-auto mb-6 rounded-lg shadow-md h-48 w-auto"
-                     onerror="this.onerror=null;this.src='https://placehold.co/300x200/333333/E5E7EB?text=3D+Painter+Preview';">
-                <p class="text-lg text-gray-300 mb-6">
-                    Unleash your creativity before you even step into the studio! Try our new 3D Fairy Painter to design your masterpiece virtually. Experiment with colors and techniques on a 3D model.
-                </p>
-                <a href="https://kmberry1989.github.io/FiredArtsStudio/3dpainter.html" target="_blank" class="btn-primary text-lg px-8 py-3 inline-block">
-                    Launch 3D Painter <i class="fas fa-external-link-alt ml-2"></i>
-                </a>
-                <p class="text-xs text-gray-500 mt-2">(Opens in a new tab)</p>
-            </div>
-        </section>
-
-        <div class="glow-divider purple"></div>
-        <section id="gallery-preview" class="mb-16 md:mb-24 scroll-mt-20 fade-in-section">
-            <h2 class="section-title text-center">Canvas Painting Highlights</h2>
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                <div class="gallery-img-container float-in-item">
-                    <img src="https://i.imgur.com/LvuzqoQ.jpeg" 
-                         alt="Colorful floral canvas painting" 
-                         onerror="this.onerror=null;this.src='https://placehold.co/400x400/ABCEA1/4A3F35?text=Canvas+Art+1';">
-                </div>
-                <div class="gallery-img-container float-in-item">
-                    <img src="https://i.imgur.com/imw20I4.jpeg" 
-                         alt="Abstract landscape canvas painting" 
-                         onerror="this.onerror=null;this.src='https://placehold.co/400x400/A1B2CE/4A3F35?text=Canvas+Art+2';">
-                </div>
-                <div class="gallery-img-container float-in-item">
-                    <img src="https://i.imgur.com/QxcKtEF.jpeg" 
-                         alt="Whimsical animal canvas painting" 
-                         onerror="this.onerror=null;this.src='https://placehold.co/400x400/CEA1A1/4A3F35?text=Canvas+Art+3';">
-                </div>
-                <div class="gallery-img-container float-in-item">
-                    <img src="https://i.imgur.com/OaRU4VT.jpeg" 
-                         alt="Sunset scene canvas painting" 
-                         onerror="this.onerror=null;this.src='https://placehold.co/400x400/CEBFA1/4A3F35?text=Canvas+Art+4';">
-                </div>
-                <div class="gallery-img-container float-in-item">
-                    <img src="https://i.imgur.com/E0bfafr.jpeg" 
-                         alt="Modern abstract canvas art" 
-                         onerror="this.onerror=null;this.src='https://placehold.co/400x400/A1CECE/4A3F35?text=Canvas+Art+5';">
-                </div>
-                <div class="gallery-img-container float-in-item">
-                    <img src="https://i.imgur.com/HiZDmlI.jpeg" 
-                         alt="Nature inspired canvas painting" 
-                         onerror="this.onerror=null;this.src='https://placehold.co/400x400/C3A1CE/4A3F35?text=Canvas+Art+6';">
-                </div>
-                 <div class="gallery-img-container float-in-item">
-                    <img src="https://i.imgur.com/1ZrggKy.jpeg" 
-                         alt="Vibrant cityscape canvas painting" 
-                         onerror="this.onerror=null;this.src='https://placehold.co/400x400/CEC8A1/4A3F35?text=Canvas+Art+7';">
-                </div>
-                 <div class="gallery-img-container float-in-item">
-                    <img src="https://i.imgur.com/eQLOiA8.jpeg" 
-                         alt="Playful character canvas painting" 
-                         onerror="this.onerror=null;this.src='https://placehold.co/400x400/A1A9CE/4A3F35?text=Canvas+Art+8';">
-                </div>
-            </div>
-            <div class="text-center mt-8 float-in-item"> 
-                 <a href="#" class="btn-primary">View Full Gallery (Coming Soon)</a>
-                 <p class="text-sm mt-2 text-gray-400">Explore more pottery and canvas creations in our studio!</p>
-            </div>
-        </section>
-
-        <div class="glow-divider blue"></div>
-        <section id="contact" class="bg-[#111827] p-8 md:p-12 rounded-xl shadow-xl scroll-mt-20 fade-in-section">
-            <h2 class="section-title text-center">Get In Touch</h2>
-            <div class="grid md:grid-cols-2 gap-8 md:gap-12">
-                <div class="float-in-item"> 
-                    <h3 class="text-2xl font-semibold mb-4 text-gray-100">Contact Us</h3>
-                    <p class="text-gray-300 mb-2"><i class="fas fa-map-marker-alt mr-2 text-[#C87E4F]"></i>111 West Sycamore Street, Kokomo, IN 46901</p>
-                    <p class="text-gray-300 mb-2"><i class="fas fa-phone-alt mr-2 text-[#C87E4F]"></i>(765) 450-3088</p>
-                    <p class="text-gray-300 mb-4"><i class="fas fa-envelope mr-2 text-[#C87E4F]"></i>Admin@firedartsstudio.com</p>
-                    
-                    <h3 class="text-2xl font-semibold mt-6 mb-3 text-gray-100">Studio Hours</h3>
-                    <div class="text-gray-300 space-y-2">
-                        <p><strong class="w-28 inline-block">Mon:</strong> Closed</p>
-                        <p><strong class="w-28 inline-block">Tue - Thu:</strong> 11 AM - 8 PM</p>
-                        <p><strong class="w-28 inline-block">Fri - Sat:</strong> 10 AM - 9 PM</p>
-                        <p><strong class="w-28 inline-block">Sun:</strong> 12 PM - 5 PM</p>
-                    </div>
-                </div>
-                <form id="contactForm" class="space-y-6 float-in-item" style="transition-delay: 0.2s;"> 
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-gray-300">Full Name</label>
-                        <input type="text" name="name" id="name" autocomplete="name" required class="mt-1 block w-full px-3 py-2 bg-gray-700 border-gray-600 text-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-[#C87E4F] focus:border-[#C87E4F] sm:text-sm placeholder-gray-400" placeholder="Your Name">
-                    </div>
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-300">Email Address</label>
-                        <input type="email" name="email" id="email" autocomplete="email" required class="mt-1 block w-full px-3 py-2 bg-gray-700 border-gray-600 text-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-[#C87E4F] focus:border-[#C87E4F] sm:text-sm placeholder-gray-400" placeholder="you@example.com">
-                    </div>
-                    <div>
-                        <label for="subject" class="block text-sm font-medium text-gray-300">Subject</label>
-                        <input type="text" name="subject" id="subject" required class="mt-1 block w-full px-3 py-2 bg-gray-700 border-gray-600 text-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-[#C87E4F] focus:border-[#C87E4F] sm:text-sm placeholder-gray-400" placeholder="Inquiry about workshops">
-                    </div>
-                    <div>
-                        <label for="message" class="block text-sm font-medium text-gray-300">Message</label>
-                        <textarea id="message" name="message" rows="4" required class="mt-1 block w-full px-3 py-2 bg-gray-700 border-gray-600 text-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-[#C87E4F] focus:border-[#C87E4F] sm:text-sm placeholder-gray-400" placeholder="Your message..."></textarea>
-                    </div>
-                    <div>
-                        <button type="submit" class="btn-primary w-full">Send Message</button>
-                    </div>
-                </form>
-            </div>
-        </section>
-    </main>
-
-    <footer class="bg-black text-white/80 py-12">
-        <div class="container mx-auto px-6 text-center">
-            <div class="mb-4">
-                <a href="#home" aria-label="Fired Arts Studio Home">
-                     <img src="https://i.imgur.com/vwMPDbl.png" alt="Fired Arts Studio Footer Logo" class="footer-logo">
-                </a>
-            </div>
-            <div class="flex justify-center space-x-6 mb-6">
-                <a href="#" class="hover:text-white" aria-label="Facebook"><i class="fab fa-facebook-f text-xl"></i></a>
-                <a href="#" class="hover:text-white" aria-label="Instagram"><i class="fab fa-instagram text-xl"></i></a>
-                <a href="#" class="hover:text-white" aria-label="Pinterest"><i class="fab fa-pinterest-p text-xl"></i></a>
-            </div>
-            <nav class="flex flex-wrap justify-center space-x-4 mb-4 text-sm">
-                <a href="#home" class="hover:text-white">Home</a>
-                <a href="#classes" class="hover:text-white">Classes</a>
-                <a href="#parties" class="hover:text-white">Parties</a>
-                <a href="#gallery" class="hover:text-white">Gallery</a>
-                <a href="#painter-promo" class="hover:text-white">3D Painter</a>
-                <a href="#contact" class="hover:text-white">Contact</a>
-                <a href="#" class="hover:text-white">Privacy Policy</a>
-                <a href="#" class="hover:text-white">Terms of Service</a>
-            </nav>
-            <p class="text-sm">&copy; <span id="currentYear"></span> Fired Arts Studio. All rights reserved.</p>
-            </div>
-    </footer>
-
-    <div id="aiIdeaModal" class="modal">
-        <div class="modal-content relative">
-            <span class="modal-close" id="closeAiIdeaModal">&times;</span>
-            <h3 id="aiModalTitle" class="text-xl font-semibold mb-4 text-gray-100">Get Creative Ideas!</h3>
-            <label for="aiPromptInput" class="block text-sm font-medium text-gray-300 mb-1">Describe your party or project theme:</label>
-            <input type="text" id="aiPromptInput" class="w-full px-3 py-2 bg-gray-700 border-gray-600 text-gray-200 rounded-md shadow-sm focus:outline-none focus:ring-[#C87E4F] focus:border-[#C87E4F] sm:text-sm placeholder-gray-400" placeholder="e.g., 'kids space theme', 'relaxing nature art'">
-            <button id="generateAiIdeasBtn" class="btn-ai w-full mt-4">Generate Ideas</button>
-            <div id="aiIdeaResult" class="mt-4 text-gray-400 text-sm space-y-2">
-                </div>
-            <div id="aiLoadingIndicator" class="loader hidden mt-4"></div>
-        </div>
+  <!-- Socials slide-over -->
+  <aside id="panel" class="panel" aria-hidden="true">
+    <div class="panel-header">
+      <div>Socials</div>
+      <button id="closePanel" class="pill">Close</button>
     </div>
+   <div class="panel-body">
+  <!-- Instagram -->
+  <div class="soc">
+    <div class="ico">📸</div>
+    <a href="https://www.instagram.com/firedartsstudio/" target="_blank" rel="noopener">Instagram — @firedartsstudio</a>
+  </div>
 
+  <!-- Facebook -->
+  <div class="soc">
+    <div class="ico">📘</div>
+    <a href="https://www.facebook.com/FiredArtsStudio/" target="_blank" rel="noopener">Facebook — Fired Arts Studio</a>
+  </div>
 
-    <script>
-        // Fallback for hero background image
-        const heroSection = document.getElementById('home');
-        if (heroSection) { 
-            const heroBgImg = new Image();
-            heroBgImg.src = 'http://www.firedartsstudio.com/uploads/1/2/5/6/125637914/editor/img-5499_1.jpeg';
-            heroBgImg.onerror = function() {
-                // No specific fallback needed if the primary style is solid black.
-            };
-        }
+  <!-- Website -->
+  <div class="soc">
+    <div class="ico">🌐</div>
+    <a href="https://www.firedartsstudio.com/" target="_blank" rel="noopener">Website — firedartsstudio.com</a>
+  </div>
 
-        // Smooth scrolling for anchor links & active nav link highlighting
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                if (targetId.length > 1) {
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        const headerElement = document.querySelector('header');
-                        const headerHeight = headerElement ? headerElement.offsetHeight : 0;
-                        const elementPosition = targetElement.getBoundingClientRect().top;
-                        const offsetPosition = elementPosition + window.pageYOffset - headerHeight - 20; 
+  <!-- Google Maps (address deep link) -->
+  <div class="soc">
+    <div class="ico">📍</div>
+    <a href="https://maps.google.com/?q=Fired+Arts+Studio,111+W+Sycamore+St,+Kokomo,+IN+46901" target="_blank" rel="noopener">
+      111 W Sycamore St, Kokomo, IN 46901
+    </a>
+  </div>
 
-                        window.scrollTo({
-                            top: offsetPosition,
-                            behavior: "smooth"
-                        });
+  <!-- Phone -->
+  <div class="soc">
+    <div class="ico">☎️</div>
+    <a href="tel:+17654503088">Call (765) 450-3088</a>
+  </div>
 
-                        document.querySelectorAll('#main-nav a.nav-link').forEach(link => {
-                            link.classList.remove('active');
-                            if (link.getAttribute('href') === targetId) {
-                                link.classList.add('active');
-                            }
-                        });
-                    }
-                }
-            });
-        });
-        
-        // Active nav link highlighting on scroll
-        const sections = document.querySelectorAll('section[id]');
-        const navLinks = document.querySelectorAll('#main-nav a.nav-link'); 
-        
-        function updateActiveNavLink() {
-            const headerElement = document.querySelector('header');
-            const headerHeight = headerElement ? headerElement.offsetHeight : 60; 
-            let current = 'home'; 
+  <!-- Email -->
+  <div class="soc">
+    <div class="ico">✉️</div>
+    <a href="mailto:Admin@FiredArtsStudio.com">Email Admin@FiredArtsStudio.com</a>
+  </div>
 
-            const logoArea = document.getElementById('logo-area');
-            const painterPromoSection = document.getElementById('painter-promo'); 
-            
-            let contentStartOffset = logoArea ? logoArea.offsetTop + logoArea.offsetHeight : 0;
-            if (painterPromoSection && painterPromoSection.offsetTop < contentStartOffset) {
-                contentStartOffset = painterPromoSection.offsetTop;
-            } else if (sections.length > 0 && sections[0].id !== 'home' && sections[0].offsetTop < contentStartOffset) {
-                contentStartOffset = sections[0].offsetTop;
-            }
+  <!-- Optional: add more when you’re ready -->
+  <!--
+  <div class="soc">
+    <div class="ico">🎵</div>
+    <a href="https://www.tiktok.com/@YOUR_HANDLE" target="_blank" rel="noopener">TikTok</a>
+  </div>
+  <div class="soc">
+    <div class="ico">▶️</div>
+    <a href="https://youtube.com/@YOUR_HANDLE" target="_blank" rel="noopener">YouTube</a>
+  </div>
+  <div class="soc">
+    <div class="ico">🧵</div>
+    <a href="https://x.com/YOUR_HANDLE" target="_blank" rel="noopener">X / Twitter</a>
+  </div>
+  -->
+</div>
+  </aside>
 
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module">
+    import * as THREE from 'three';
+    import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+    import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-            if (pageYOffset < contentStartOffset - headerHeight - 30) {
-                current = 'home';
-            } else {
-                sections.forEach(section => {
-                    const sectionTop = section.offsetTop;
-                    if (pageYOffset >= sectionTop - headerHeight - 30) { 
-                        current = section.getAttribute('id');
-                    }
-                });
-            }
+    /* ---------- Simple UI ---------- */
+    const panel = document.getElementById('panel');
+    document.getElementById('openSocials').onclick = ()=>{ panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); };
+    document.getElementById('closePanel').onclick = ()=>{ panel.classList.remove('open'); panel.setAttribute('aria-hidden','true'); };
+    const siteFrame = document.getElementById('siteFrame');
+    const siteFallback = document.getElementById('siteFallback');
+    siteFrame.addEventListener('error', ()=>{ siteFallback.style.display='block'; });
 
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                const linkHref = link.getAttribute('href');
-                if (linkHref === `#${current}`) {
-                    link.classList.add('active');
-                }
-            });
-        }
-        window.addEventListener('scroll', updateActiveNavLink);
-        window.addEventListener('load', updateActiveNavLink); 
+    /* ---------- Scene setup ---------- */
+    const canvas = document.getElementById('bg');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
 
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(0x161616, 16, 44);
 
-        // Set current year in footer
-        const currentYearElement = document.getElementById('currentYear');
-        if (currentYearElement) {
-            currentYearElement.textContent = new Date().getFullYear();
-        }
-        
-        // Universal Message Display Function
-        function showMessage(message, type = 'info', duration = 4000) {
-            const existingMessageBox = document.querySelector('.message-box');
-            if (existingMessageBox) {
-                existingMessageBox.remove();
-            }
+    const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 1000);
+    const clock = new THREE.Clock();
 
-            const messageBox = document.createElement('div');
-            messageBox.classList.add('message-box', type);
-            messageBox.textContent = message;
-            document.body.appendChild(messageBox);
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmrem.fromScene(new RoomEnvironment(renderer)).texture;
 
-            setTimeout(() => {
-                messageBox.classList.add('show');
-            }, 10);
+    // Lights: soft ambient + key/fill
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const key = new THREE.DirectionalLight(0xffffff, 1.0);
+    key.position.set(-9, 13, 9); key.castShadow = true; key.shadow.mapSize.set(2048,2048);
+    key.shadow.camera.near=0.5; key.shadow.camera.far=40; key.shadow.bias=-0.0001; scene.add(key);
+    const fill = new THREE.DirectionalLight(0xffffff, 0.6); fill.position.set(9, 7, -9); scene.add(fill);
 
-            setTimeout(() => {
-                messageBox.classList.remove('show');
-                setTimeout(() => {
-                    if (document.body.contains(messageBox)) {
-                       document.body.removeChild(messageBox);
-                    }
-                }, 500);
-            }, duration);
-        }
+    // Post: heat + bloom + grain
+    const composer = new EffectComposer(renderer);
+    const renderPass = new RenderPass(scene, camera);
+    const heatPass = new ShaderPass({
+      uniforms: { tDiffuse:{value:null}, time:{value:0}, intensity:{value:0} },
+      vertexShader:`varying vec2 vUv; void main(){vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+      fragmentShader:`uniform sampler2D tDiffuse; uniform float time; uniform float intensity; varying vec2 vUv;
+        void main(){
+          float a=sin(vUv.y*80.0 + time*8.0);
+          float b=sin(vUv.y*130.0 - time*10.0);
+          float warp=(a+b)/2.0;
+          vec2 uv=vUv; uv.x += intensity*0.0035*warp; uv.y += intensity*0.0018*sin(vUv.x*50.0 + time*6.0);
+          vec4 col=texture2D(tDiffuse, uv);
+          vec3 warm=vec3(1.0,0.8,0.62);
+          col.rgb=mix(col.rgb, warm, intensity*0.1);
+          gl_FragColor=col;
+        }`
+    });
+    const bloomPass = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.5, 0.9, 0.85);
+    const grainPass = new ShaderPass({
+      uniforms:{ tDiffuse:{value:null}, time:{value:0}, amount:{value:0.06} },
+      vertexShader:`varying vec2 vUv; void main(){vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+      fragmentShader:`uniform sampler2D tDiffuse; uniform float time; uniform float amount; varying vec2 vUv;
+        float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
+        void main(){ vec4 col=texture2D(tDiffuse, vUv); float n=hash(vUv*vec2(1920.0,1080.0) + time); col.rgb += (n-0.5)*amount; gl_FragColor=col; }`
+    });
+    composer.addPass(renderPass); composer.addPass(heatPass); composer.addPass(bloomPass); composer.addPass(grainPass);
 
+    /* ---------- Pottery ring (concise) ---------- */
+    const pots = [];
+    const RING = 6.0, UNIFORM_H = 3.2, RADIAL_SEGS = 96;
+    function lathe(points){ const g = new THREE.LatheGeometry(points, RADIAL_SEGS); g.computeVertexNormals(); return g; }
+    function profile(){
+      const cps=[[0.02,-1.55],[0.45,-1.52],[0.95,-1.35],[1.25,-0.95],[1.40,-0.55],[1.15,0.05],[0.95,0.45],[0.8,0.95],[0.75,1.4]];
+      const pts = cps.map(([x,y])=>new THREE.Vector2(x,y));
+      const out=[]; for(let i=0;i<=160;i++){ const t=i/160, a= i%pts.length, b=(i+1)%pts.length;
+        const p1=pts[a], p2=pts[b]; const y=p1.y + (p2.y-p1.y)*t; const x=p1.x + (p2.x-p1.x)*t; out.push(new THREE.Vector2(Math.max(0.001,x), y));
+      }
+      out.sort((a,b)=>a.y-b.y);
+      const minY=out[0].y, maxY=out[out.length-1].y, scale=UNIFORM_H/(maxY-minY);
+      return out.map(p=>new THREE.Vector2(p.x, (p.y-minY)*scale));
+    }
+    function baseTexture(hex){
+      const c=document.createElement('canvas'); c.width=c.height=1024; const ctx=c.getContext('2d');
+      ctx.fillStyle = `#${hex.toString(16).padStart(6,'0')}`; ctx.fillRect(0,0,c.width,c.height);
+      const t=new THREE.CanvasTexture(c); t.wrapS=t.wrapT=THREE.RepeatWrapping; t.colorSpace=THREE.SRGBColorSpace; t.anisotropy=8; return t;
+    }
+    function makePot(i,total){
+      const pts = profile();
+      const start = pts.map(p=>new THREE.Vector2(0.18,p.y));
+      const g0 = lathe(start), g1 = lathe(pts);
+      g0.morphAttributes={ position:[g1.attributes.position], normal:[g1.attributes.normal] };
+      const mat=new THREE.MeshPhysicalMaterial({ map:baseTexture(0xE9D5C9), roughness:0.34, metalness:0.02, clearcoat:1, clearcoatRoughness:0.06, morphTargets:true, morphNormals:true });
+      const m=new THREE.Mesh(g0,mat); m.castShadow=m.receiveShadow=true;
+      const ang = i/total * Math.PI*2; const radius = RING*(0.8+Math.random()*0.4);
+      m.position.set(Math.cos(ang)*radius,0,Math.sin(ang)*radius);
+      scene.add(m);
+      return {mesh:m, a:Math.random()*Math.PI*2};
+    }
+    for(let i=0;i<6;i++) pots.push(makePot(i,6));
 
-        // Form submission
-        const contactForm = document.getElementById('contactForm');
-        if(contactForm) {
-            contactForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                showMessage('Thank you for your message! We will get back to you soon.', 'success');
-                contactForm.reset(); 
-            });
-        }
+    /* ---------- Flame: standout + climax ---------- */
+    const strobe = document.getElementById('strobe');
+    function flash(){ strobe.classList.remove('flash'); void strobe.offsetWidth; strobe.classList.add('flash'); }
 
-        // Intersection Observer for animations
-        const animatedSections = document.querySelectorAll('.fade-in-section');
-        const animatedItems = document.querySelectorAll('.float-in-item');
+    function flameTexture(hex){
+      const c=document.createElement('canvas'); c.width=c.height=256; const x=c.getContext('2d');
+      const col=new THREE.Color(hex); const rgb=v=>Math.round(v*255);
+      const g=x.createRadialGradient(128,170,12,128,128,128);
+      g.addColorStop(0,'rgba(255,255,255,.95)');
+      g.addColorStop(.25,`rgba(${rgb(col.r)},${rgb(col.g)},${rgb(col.b)},.92)`);
+      g.addColorStop(.6,`rgba(${rgb(col.r)},${rgb(col.g)},${rgb(col.b)},.25)`);
+      g.addColorStop(1,`rgba(${rgb(col.r)},${rgb(col.g)},${rgb(col.b)},0)`);
+      x.fillStyle=g; x.fillRect(0,0,256,256); const t=new THREE.CanvasTexture(c);
+      t.colorSpace=THREE.SRGBColorSpace; t.anisotropy=8; return t;
+    }
+    function ringTexture(){
+      const c=document.createElement('canvas'); c.width=c.height=256; const x=c.getContext('2d');
+      const g=x.createRadialGradient(128,128,60,128,128,124);
+      g.addColorStop(0,'rgba(255,255,255,.7)'); g.addColorStop(.6,'rgba(255,255,255,.25)'); g.addColorStop(1,'rgba(255,255,255,0)');
+      x.fillStyle=g; x.beginPath(); x.arc(128,128,124,0,Math.PI*2); x.fill();
+      const t=new THREE.CanvasTexture(c); t.colorSpace=THREE.SRGBColorSpace; return t;
+    }
 
-        const observerOptions = {
-            root: null, 
-            rootMargin: '0px',
-            threshold: 0.1 
-        };
+    const flameGroup = new THREE.Group(); scene.add(flameGroup);
+    flameGroup.position.set(0,1.2,0);
 
-        const observerCallback = (entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                    observer.unobserve(entry.target); 
-                }
-            });
-        };
+    const layers = [
+      { hex:0x64B5FF, w:1.6, h:1.6, speed:3.0, jitter:.15 },
+      { hex:0x9E5BFF, w:1.9, h:1.9, speed:2.6, jitter:.18 },
+      { hex:0xFFA03A, w:2.2, h:2.2, speed:2.0, jitter:.21 },
+      { hex:0xFF5A4F, w:2.6, h:2.6, speed:1.6, jitter:.24 },
+    ];
+    const sprites = layers.map(L=>{
+      const mat=new THREE.SpriteMaterial({ map:flameTexture(L.hex), transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, opacity:0.0 });
+      const s=new THREE.Sprite(mat); s.scale.set(L.w,L.h,1); s.userData={...L, t:Math.random()*6.28}; flameGroup.add(s); return s;
+    });
+    const flameLight = new THREE.PointLight(0xFF9A55, 0, 40, 2.0); flameLight.position.set(0,1.9,0); flameGroup.add(flameLight);
 
-        const observer = new IntersectionObserver(observerCallback, observerOptions);
-        
-        animatedSections.forEach(section => {
-            observer.observe(section);
-        });
-        animatedItems.forEach(item => {
-            observer.observe(item);
-        });
+    // Sparks
+    const sparkTex = (()=>{ const c=document.createElement('canvas'); c.width=c.height=64; const x=c.getContext('2d');
+      const g=x.createRadialGradient(32,32,1,32,32,32); g.addColorStop(0,'rgba(255,230,180,1)'); g.addColorStop(1,'rgba(255,230,180,0)');
+      x.fillStyle=g; x.beginPath(); x.arc(32,32,32,0,Math.PI*2); x.fill(); const t=new THREE.CanvasTexture(c); t.colorSpace=THREE.SRGBColorSpace; return t; })();
+    const sparkGeo = new THREE.BufferGeometry();
+    const N=480; const pos=new Float32Array(N*3), vel=new Float32Array(N*3), life=new Float32Array(N);
+    function respawn(i,big=false){
+      const ang=Math.random()*Math.PI*2, r=0.12+Math.random()*0.28;
+      pos[i*3+0]=Math.cos(ang)*r; pos[i*3+2]=Math.sin(ang)*r; pos[i*3+1]=0.8;
+      vel[i*3+0]=(Math.random()-0.5)*0.18*(big?2.0:1.0);
+      vel[i*3+2]=(Math.random()-0.5)*0.18*(big?2.0:1.0);
+      vel[i*3+1]=0.8 + Math.random()*1.6*(big?1.6:1.0);
+      life[i]=0.6 + Math.random()*1.3*(big?1.6:1.0);
+    }
+    for(let i=0;i<N;i++) respawn(i,true);
+    sparkGeo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+    sparkGeo.setAttribute('velocity', new THREE.BufferAttribute(vel,3));
+    sparkGeo.setAttribute('life', new THREE.BufferAttribute(life,1));
+    const sparks = new THREE.Points(sparkGeo, new THREE.PointsMaterial({ size:0.06, map:sparkTex, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, opacity:.9, color:0xffddb0 }));
+    sparks.position.set(0,1.2,0); scene.add(sparks);
 
-        const heroContent = document.querySelector('#home .fade-in-section');
-        if (heroContent) {
-            setTimeout(() => {
-                heroContent.classList.add('is-visible');
-            }, 100);
-        }
+    // Shockwave ring
+    const ringMat = new THREE.SpriteMaterial({ map:ringTexture(), transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, opacity:0.0 });
+    const ring = new THREE.Sprite(ringMat); ring.scale.set(0.1,0.1,1); ring.position.set(0,1.2,0); scene.add(ring);
 
-        // AI Idea Generator Logic
-        const aiIdeaModal = document.getElementById('aiIdeaModal');
-        const closeAiIdeaModalBtn = document.getElementById('closeAiIdeaModal');
-        const getPartyIdeasBtn = document.getElementById('getPartyIdeasBtn');
-        const getProjectInspirationBtn = document.getElementById('getProjectInspirationBtn');
-        const generateAiIdeasBtn = document.getElementById('generateAiIdeasBtn');
-        const aiPromptInput = document.getElementById('aiPromptInput');
-        const aiIdeaResult = document.getElementById('aiIdeaResult');
-        const aiLoadingIndicator = document.getElementById('aiLoadingIndicator');
-        const aiModalTitle = document.getElementById('aiModalTitle');
-        let currentAiFeature = ''; 
+    // Floor
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(200,200), new THREE.ShadowMaterial({opacity:0.38}));
+    floor.rotation.x = -Math.PI/2; floor.position.y = 0.01; floor.receiveShadow = true; scene.add(floor);
 
-        function openAiModal(featureType, title, placeholder) {
-            currentAiFeature = featureType;
-            aiModalTitle.textContent = title;
-            aiModalTitle.style.color = '#F3F4F6'; 
-            document.querySelector('#aiIdeaModal .modal-content label').style.color = '#D1D5DB'; 
+    /* ---------- Motion & behavior ---------- */
+    // camera auto-rotate; wheel speeds up/down (outside iframe)
+    let angle=0, speed=0.00032, baseSpeed=0.00032;
+    addEventListener('wheel', e=>{
+      const dir=Math.sign(e.deltaY);
+      speed = THREE.MathUtils.clamp(speed + dir*0.00022, 0.00005, 0.004);
+    }, {passive:true});
 
-            aiPromptInput.placeholder = placeholder;
-            aiPromptInput.value = ''; 
-            aiIdeaResult.innerHTML = ''; 
-            aiIdeaResult.style.color = '#9CA3AF'; 
-            aiIdeaModal.classList.add('is-visible');
-        }
+    // kiln curve → flame climax once
+    let tKiln=0, peaked=false;
+    function animate(){
+      requestAnimationFrame(animate);
+      const dt=clock.getDelta(); const now=performance.now();
 
-        if (getPartyIdeasBtn) {
-            getPartyIdeasBtn.addEventListener('click', () => {
-                openAiModal('party', '✨ Get Creative Party Ideas!', "e.g., 'kids space theme', 'adults relaxing night'");
-            });
-        }
+      // Camera
+      angle += speed; speed = THREE.MathUtils.lerp(speed, baseSpeed, 0.01);
+      camera.position.set(Math.cos(angle)*22, 4, Math.sin(angle)*22);
+      camera.lookAt(0,1.2,0);
 
-        if (getProjectInspirationBtn) {
-            getProjectInspirationBtn.addEventListener('click', () => {
-                openAiModal('project', '✨ Get Project Inspiration!', "e.g., 'nature pottery', 'abstract canvas', 'calm colors'");
-            });
-        }
-        
-        if (closeAiIdeaModalBtn) {
-            closeAiIdeaModalBtn.addEventListener('click', () => {
-                aiIdeaModal.classList.remove('is-visible');
-            });
-        }
+      // Pottery morph (subtle)
+      pots.forEach((p,i)=>{ const m=p.mesh; const k=0.65+0.35*Math.sin(now*0.0004 + i); m.morphTargetInfluences[0]=k; m.rotation.y += 0.003; });
 
-        if (aiIdeaModal) {
-            aiIdeaModal.addEventListener('click', (event) => {
-                if (event.target === aiIdeaModal) {
-                    aiIdeaModal.classList.remove('is-visible');
-                }
-            });
-        }
+      // Flame build → peak
+      tKiln += dt;
+      const kilnEase = tKiln<8 ? (tKiln/8) : 1; // up in 8s then hold
+      // sprite wobble + opacity
+      sprites.forEach((s,idx)=>{
+        const d=s.userData; d.t += dt*d.speed;
+        const wobble = Math.sin(d.t)*d.jitter + (Math.random()-0.5)*d.jitter*0.5;
+        const w = d.w * (1.0 + wobble*0.45);
+        const h = d.h * (1.0 + wobble*0.85);
+        s.scale.set(w*(1.2+kilnEase*0.8), h*(1.2+kilnEase*1.2), 1);
+        s.position.y = 0.15 + s.scale.y*0.35;
+        s.material.opacity = THREE.MathUtils.lerp(s.material.opacity, 0.92, 0.12);
+      });
+      // light color flicker + intensity
+      const c1=new THREE.Color(0x5AA8FF), c2=new THREE.Color(0xFFA860);
+      const mix=0.5+0.5*Math.sin(tKiln*4.7+Math.random()*0.5);
+      flameLight.color.copy(c1).lerp(c2, mix);
+      flameLight.intensity = 6.0 * (0.7 + 0.3*Math.sin(tKiln*15.3) + 0.15*(Math.random()-0.5));
+      flameLight.position.y = 1.4 + 0.12*Math.sin(tKiln*6.0);
+      bloomPass.strength = 0.35 + kilnEase*0.95;
+      heatPass.uniforms.time.value = now*0.0015;
+      heatPass.uniforms.intensity.value = kilnEase*0.9;
 
+      // Sparks
+      const P=sparkGeo.attributes.position.array, V=sparkGeo.attributes.velocity.array, L=sparkGeo.attributes.life.array;
+      for(let i=0;i<N;i++){
+        L[i]-=dt*(0.9 + kilnEase*0.7);
+        P[i*3+0]+=V[i*3+0]*dt; P[i*3+1]+=V[i*3+1]*dt; P[i*3+2]+=V[i*3+2]*dt;
+        V[i*3+1]-=dt*0.25;
+        if(L[i]<=0 || P[i*3+1]>4.0) respawn(i,false);
+      }
+      sparkGeo.attributes.position.needsUpdate=true;
+      sparks.material.opacity = 0.5 + 0.5*kilnEase;
 
-        async function fetchAiIdeas(userInput) {
-            aiLoadingIndicator.classList.remove('hidden');
-            aiIdeaResult.innerHTML = '';
-            let promptText = "";
+      // One-time climax (flash + big spark burst + shockwave) at ~3.5s
+      if(!peaked && tKiln>3.5){
+        peaked = true;
+        flash();
+        // boost sparks briefly
+        for(let i=0;i<N; i++){ V[i*3+0]*=1.8; V[i*3+1]*=2.2; V[i*3+2]*=1.8; }
+        // shockwave ring
+        ring.scale.set(0.2,0.2,1); ring.material.opacity=0.9;
+      }
+      // shockwave anim
+      if(ring.material.opacity>0.01){
+        ring.scale.x *= (1 + dt*3.2);
+        ring.scale.y = ring.scale.x;
+        ring.material.opacity = Math.max(0, ring.material.opacity - dt*1.2);
+      }
 
-            if (currentAiFeature === 'party') {
-                promptText = `Generate 3 creative and fun party theme ideas for Fired Arts Studio (a paint-your-own-pottery and canvas painting studio) based on the following user request: "${userInput}". For each idea, provide a catchy name and a brief 1-2 sentence description. Format each idea clearly.`;
-            } else if (currentAiFeature === 'project') {
-                promptText = `Generate 3 unique art project ideas suitable for Fired Arts Studio (pottery and canvas painting) based on this user input: "${userInput}". For each idea, suggest if it's better for pottery or canvas (or both), and give a short, inspiring description (1-2 sentences). Format each idea clearly.`;
-            }
+      composer.render();
+    }
+    animate();
 
-            if (!promptText) {
-                aiLoadingIndicator.classList.add('hidden');
-                showMessage('Error: Invalid feature type.', 'error');
-                return;
-            }
-            
-            let chatHistory = [{ role: "user", parts: [{ text: promptText }] }];
-            const payload = { contents: chatHistory };
-            const apiKey = ""; 
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    /* ---------- Resize & UX tweaks ---------- */
+    function onResize(){
+      renderer.setSize(innerWidth, innerHeight);
+      composer.setSize(innerWidth, innerHeight);
+      camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
+    }
+    addEventListener('resize', onResize);
 
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    console.error('API Error Response:', errorData);
-                    throw new Error(`API request failed with status ${response.status}: ${errorData.error?.message || 'Unknown error'}`);
-                }
-
-                const result = await response.json();
-                
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
-                    aiIdeaResult.innerHTML = `<p>${formattedText}</p>`;
-                } else {
-                    console.error('Unexpected API response structure:', result);
-                    aiIdeaResult.innerHTML = '<p>Sorry, I couldn\'t generate ideas at this time. The response from the AI was not as expected.</p>';
-                }
-            } catch (error) {
-                console.error('Error fetching AI ideas:', error);
-                aiIdeaResult.innerHTML = `<p>Sorry, I couldn't generate ideas at this time. Error: ${error.message}</p>`;
-                showMessage(`Error generating ideas: ${error.message}`, 'error');
-            } finally {
-                aiLoadingIndicator.classList.add('hidden');
-            }
-        }
-
-        if (generateAiIdeasBtn) {
-            generateAiIdeasBtn.addEventListener('click', () => {
-                const userInput = aiPromptInput.value.trim();
-                if (userInput) {
-                    fetchAiIdeas(userInput);
-                } else {
-                    showMessage('Please enter a description or theme for your ideas.', 'info');
-                }
-            });
-        }
-
-    </script>
+    // Let the foreground site scroll (inside the iframe), but still allow speed control:
+    // We can’t capture wheel events while pointer is inside the cross-origin iframe,
+    // so we also listen on the page itself (e.g., when cursor is over the margins/topbar).
+    // Tip to users in the hint (already shown in UI).
+    document.body.style.overflow = 'hidden'; // page won't scroll; site iframe scrolls itself
+  </script>
 </body>
 </html>
