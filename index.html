@@ -3,20 +3,17 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Fired Arts • Site with Immersive Background</title>
+  <title>Fired Arts • Pottery Stage</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    :root{
-      --edge:#ffffff1a; --panel:#0b0e14cc;
-    }
-    /* Background */
+    /* Cinematic background + film grain overlay + strobe flash */
     html,body{height:100%}
-    body{margin:0;background:#121212;font-family:Inter,system-ui,Segoe UI,Roboto,sans-serif;overflow:hidden}
-    canvas#bg{position:fixed;inset:0;z-index:-1;display:block}
-    .vignette{position:fixed;inset:0;pointer-events:none;z-index:0;
-      background:radial-gradient(120% 100% at 50% 65%, transparent 40%, rgba(0,0,0,.85) 100%);
+    body{margin:0;overflow:hidden;background:#141414;font-family:Inter,system-ui,Segoe UI,Roboto,sans-serif}
+    canvas{position:fixed;inset:0;z-index:-1;display:block}
+    .vignette{position:fixed;inset:0;pointer-events:none;z-index:10;
+      background:radial-gradient(120% 100% at 50% 62%, transparent 38%, rgba(0,0,0,.86) 100%);
     }
-    .film{position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.12;background-image:
+    .film{position:fixed;inset:0;pointer-events:none;z-index:11;opacity:.12;background-image:
       radial-gradient(1px 1px at 10% 20%, #ffffff22, transparent 40%),
       radial-gradient(1px 1px at 70% 40%, #ffffff18, transparent 40%),
       radial-gradient(1px 1px at 30% 80%, #ffffff12, transparent 40%),
@@ -25,128 +22,12 @@
     .strobe{position:fixed;inset:0;background:#fff;opacity:0;mix-blend-mode:screen;pointer-events:none;z-index:1000}
     @keyframes strobeFlash{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
     .strobe.flash{animation:strobeFlash 460ms ease-out 1}
-
-    /* Foreground site */
-    .site-wrap{position:relative; z-index:10; display:grid; place-items:center; height:100vh; padding:24px}
-    .site-card{
-      width:min(1200px, 95vw); height:min(92vh, 900px);
-      border-radius:18px; overflow:hidden; background:#0c0f16cc; border:1px solid var(--edge);
-      backdrop-filter:saturate(140%) blur(8px); box-shadow:0 30px 90px rgba(0,0,0,.6);
-    }
-    .site-iframe{width:100%; height:100%; border:0; background:#0a0d14}
-    .site-fallback{display:none; color:#d6def2; padding:18px}
-    .site-fallback a{color:#8bb7ff; text-decoration:underline}
-
-    /* Topbar */
-    .topbar{position:fixed; left:16px; right:16px; top:16px; z-index:20; display:flex; gap:12px; align-items:center}
-    .brand{padding:10px 14px; border-radius:14px; background:linear-gradient(180deg,#12151d,#0b0d12);
-      border:1px solid var(--edge); color:#e7ecf5; font-weight:700; letter-spacing:.25px}
-    .pill{padding:10px 14px; border-radius:999px; background:linear-gradient(180deg,#0f1724,#0b0f17);
-      color:#cfe0ff; border:1px solid #ffffff1f; cursor:pointer; user-select:none;
-      box-shadow:0 6px 24px rgba(0,0,0,.35), 0 0 16px #5fb7ff1a inset; transition:transform .15s ease, box-shadow .15s ease;}
-    .pill:hover{transform:translateY(-1px); box-shadow:0 10px 28px rgba(0,0,0,.4), 0 0 28px #5fb7ff33 inset}
-    .hint{color:#a7b0c6; font-size:12px; margin-left:8px; opacity:.85}
-
-    /* Socials panel */
-    .panel{position:fixed; top:0; right:0; height:100vh; width:min(420px,100vw);
-      background:var(--panel); border-left:1px solid var(--edge); backdrop-filter:saturate(140%) blur(12px);
-      z-index:30; transform:translateX(100%); transition:transform .32s cubic-bezier(.22,.8,.2,1); display:flex; flex-direction:column}
-    .panel.open{transform:translateX(0)}
-    .panel-header{display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--edge); color:#e9efff}
-    .panel-body{padding:14px 16px; overflow:auto}
-    .soc{display:grid; grid-template-columns:32px 1fr; gap:10px; align-items:center; padding:10px 6px; border-radius:12px; border:1px solid #ffffff12; margin-bottom:10px}
-    .soc a{color:#cfe0ff; text-decoration:none}
-    .soc a:hover{ text-decoration:underline }
-    .ico{width:26px; height:26px; display:grid; place-items:center; border-radius:7px; background:#0f1422; border:1px solid #ffffff14}
   </style>
 </head>
 <body>
-  <canvas id="bg"></canvas>
   <div class="vignette"></div>
   <div class="film"></div>
   <div id="strobe" class="strobe"></div>
-
-  <!-- Foreground website -->
-  <div class="topbar">
-    <div class="brand">Fired Arts Studio</div>
-    <button id="openSocials" class="pill">Open Socials</button>
-    <div class="hint">Scroll page = faster • Scroll up = slower</div>
-  </div>
-
-  <main class="site-wrap">
-    <section class="site-card">
-      <iframe id="siteFrame" class="site-iframe"
-        src="https://fired-arts-studio-ljn1rre5o-kyle-matthew-berry-s-projects.vercel.app/"
-        title="Fired Arts Studio Website"></iframe>
-      <div id="siteFallback" class="site-fallback">
-        We couldn’t embed the site (likely due to its security settings).
-        <a href="https://fired-arts-studio-ljn1rre5o-kyle-matthew-berry-s-projects.vercel.app/" target="_blank" rel="noopener">Open in a new tab ↗</a>
-      </div>
-    </section>
-  </main>
-
-  <!-- Socials slide-over -->
-  <aside id="panel" class="panel" aria-hidden="true">
-    <div class="panel-header">
-      <div>Socials</div>
-      <button id="closePanel" class="pill">Close</button>
-    </div>
-   <div class="panel-body">
-  <!-- Instagram -->
-  <div class="soc">
-    <div class="ico">📸</div>
-    <a href="https://www.instagram.com/firedartsstudio/" target="_blank" rel="noopener">Instagram — @firedartsstudio</a>
-  </div>
-
-  <!-- Facebook -->
-  <div class="soc">
-    <div class="ico">📘</div>
-    <a href="https://www.facebook.com/FiredArtsStudio/" target="_blank" rel="noopener">Facebook — Fired Arts Studio</a>
-  </div>
-
-  <!-- Website -->
-  <div class="soc">
-    <div class="ico">🌐</div>
-    <a href="https://www.firedartsstudio.com/" target="_blank" rel="noopener">Website — firedartsstudio.com</a>
-  </div>
-
-  <!-- Google Maps (address deep link) -->
-  <div class="soc">
-    <div class="ico">📍</div>
-    <a href="https://maps.google.com/?q=Fired+Arts+Studio,111+W+Sycamore+St,+Kokomo,+IN+46901" target="_blank" rel="noopener">
-      111 W Sycamore St, Kokomo, IN 46901
-    </a>
-  </div>
-
-  <!-- Phone -->
-  <div class="soc">
-    <div class="ico">☎️</div>
-    <a href="tel:+17654503088">Call (765) 450-3088</a>
-  </div>
-
-  <!-- Email -->
-  <div class="soc">
-    <div class="ico">✉️</div>
-    <a href="mailto:Admin@FiredArtsStudio.com">Email Admin@FiredArtsStudio.com</a>
-  </div>
-
-  <!-- Optional: add more when you’re ready -->
-  <!--
-  <div class="soc">
-    <div class="ico">🎵</div>
-    <a href="https://www.tiktok.com/@YOUR_HANDLE" target="_blank" rel="noopener">TikTok</a>
-  </div>
-  <div class="soc">
-    <div class="ico">▶️</div>
-    <a href="https://youtube.com/@YOUR_HANDLE" target="_blank" rel="noopener">YouTube</a>
-  </div>
-  <div class="soc">
-    <div class="ico">🧵</div>
-    <a href="https://x.com/YOUR_HANDLE" target="_blank" rel="noopener">X / Twitter</a>
-  </div>
-  -->
-</div>
-  </aside>
 
   <script type="importmap">
   {
@@ -156,6 +37,7 @@
     }
   }
   </script>
+
   <script type="module">
     import * as THREE from 'three';
     import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
@@ -163,27 +45,20 @@
     import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
     import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
     import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+    import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
 
-    /* ---------- Simple UI ---------- */
-    const panel = document.getElementById('panel');
-    document.getElementById('openSocials').onclick = ()=>{ panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); };
-    document.getElementById('closePanel').onclick = ()=>{ panel.classList.remove('open'); panel.setAttribute('aria-hidden','true'); };
-    const siteFrame = document.getElementById('siteFrame');
-    const siteFallback = document.getElementById('siteFallback');
-    siteFrame.addEventListener('error', ()=>{ siteFallback.style.display='block'; });
-
-    /* ---------- Scene setup ---------- */
-    const canvas = document.getElementById('bg');
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+    /* ----------------------- Scene & renderer ----------------------- */
+    const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
     renderer.setSize(innerWidth, innerHeight);
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
+    document.body.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x161616, 16, 44);
+    scene.fog = new THREE.Fog(0x161616, 16, 46);
 
     const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 1000);
     const clock = new THREE.Clock();
@@ -191,17 +66,37 @@
     const pmrem = new THREE.PMREMGenerator(renderer);
     scene.environment = pmrem.fromScene(new RoomEnvironment(renderer)).texture;
 
-    // Lights: soft ambient + key/fill
-    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    /* ----------------------- Lights ----------------------- */
+    scene.add(new THREE.AmbientLight(0xffffff, 0.65));
     const key = new THREE.DirectionalLight(0xffffff, 1.0);
-    key.position.set(-9, 13, 9); key.castShadow = true; key.shadow.mapSize.set(2048,2048);
-    key.shadow.camera.near=0.5; key.shadow.camera.far=40; key.shadow.bias=-0.0001; scene.add(key);
-    const fill = new THREE.DirectionalLight(0xffffff, 0.6); fill.position.set(9, 7, -9); scene.add(fill);
+    key.position.set(-9, 13, 9);
+    key.castShadow = true; key.shadow.mapSize.set(2048,2048);
+    key.shadow.camera.near=0.5; key.shadow.camera.far=40; key.shadow.bias=-0.0001;
+    scene.add(key);
+    const fill = new THREE.DirectionalLight(0xffffff, 0.58);
+    fill.position.set(9, 7, -9);
+    scene.add(fill);
 
-    // Post: heat + bloom + grain
+    // Studio ceiling fixtures (rect area lights + housings)
+    RectAreaLightUniformsLib.init();
+    (function createStudioLights(){
+      const y = 9.5, spacing = 6.5, rows = [-spacing, 0, spacing];
+      rows.forEach(z=>{
+        const rect = new THREE.RectAreaLight(0xffffff, 8.0, 6.0, 1.0);
+        rect.position.set(0,y,z); rect.rotation.x = -Math.PI/2; scene.add(rect);
+        const bar = new THREE.Mesh(new THREE.BoxGeometry(6, .15, .6),
+          new THREE.MeshStandardMaterial({ color:0x222326, emissive:0x222222, emissiveIntensity:1.6, roughness:.4, metalness:.1 }));
+        bar.position.set(0, y-0.1, z); scene.add(bar);
+      });
+    })();
+
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(200,200), new THREE.ShadowMaterial({opacity:0.38}));
+    floor.rotation.x = -Math.PI/2; floor.position.y = 0.01; floor.receiveShadow = true; scene.add(floor);
+
+    /* ----------------------- Post FX ----------------------- */
     const composer = new EffectComposer(renderer);
     const renderPass = new RenderPass(scene, camera);
-    const heatPass = new ShaderPass({
+    const HeatWaveShader = {
       uniforms: { tDiffuse:{value:null}, time:{value:0}, intensity:{value:0} },
       vertexShader:`varying vec2 vUv; void main(){vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
       fragmentShader:`uniform sampler2D tDiffuse; uniform float time; uniform float intensity; varying vec2 vUv;
@@ -215,8 +110,9 @@
           col.rgb=mix(col.rgb, warm, intensity*0.1);
           gl_FragColor=col;
         }`
-    });
-    const bloomPass = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.5, 0.9, 0.85);
+    };
+    const heatPass = new ShaderPass(HeatWaveShader);
+    const bloomPass = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.35, 0.9, 0.85);
     const grainPass = new ShaderPass({
       uniforms:{ tDiffuse:{value:null}, time:{value:0}, amount:{value:0.06} },
       vertexShader:`varying vec2 vUv; void main(){vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
@@ -226,195 +122,592 @@
     });
     composer.addPass(renderPass); composer.addPass(heatPass); composer.addPass(bloomPass); composer.addPass(grainPass);
 
-    /* ---------- Pottery ring (concise) ---------- */
-    const pots = [];
-    const RING = 6.0, UNIFORM_H = 3.2, RADIAL_SEGS = 96;
-    function lathe(points){ const g = new THREE.LatheGeometry(points, RADIAL_SEGS); g.computeVertexNormals(); return g; }
-    function profile(){
-      const cps=[[0.02,-1.55],[0.45,-1.52],[0.95,-1.35],[1.25,-0.95],[1.40,-0.55],[1.15,0.05],[0.95,0.45],[0.8,0.95],[0.75,1.4]];
-      const pts = cps.map(([x,y])=>new THREE.Vector2(x,y));
-      const out=[]; for(let i=0;i<=160;i++){ const t=i/160, a= i%pts.length, b=(i+1)%pts.length;
-        const p1=pts[a], p2=pts[b]; const y=p1.y + (p2.y-p1.y)*t; const x=p1.x + (p2.x-p1.x)*t; out.push(new THREE.Vector2(Math.max(0.001,x), y));
+    /* ----------------------- Parameters ----------------------- */
+    const PHASE = { COIL:0, SCULPT:1, PAUSE:2, PAINT:3, KILN:4 };
+    let phase = PHASE.COIL, phaseStart = performance.now(), paintStart = 0;
+
+    const COIL_DURATION_MS   = 4800;
+    const SCULPT_DURATION_MS = 4000;
+    const DRYING_PAUSE_MS    = 900;
+    const COVERAGE_START_MS  = 3800;
+    const KILN_TRIGGER_MS    = 12000;
+    const KILN_DURATION_MS   = 8000;
+
+    const UNIFORM_POT_HEIGHT = 3.2;
+    const RADIAL_SEGS = 96;
+    const TEXTURE_SIZE = 1024;
+    const PAINT_BRUSH_RADIUS = 0.03;
+    const NUM_KALEIDOSCOPE_POINTS = 8;
+
+    // Camera auto-rotate with wheel speed control
+    let angle=0, speed=0.00032, baseSpeed=0.00032;
+    const minSpeed=0.00005, maxSpeed=0.004;
+    addEventListener('wheel', e=>{
+      const dir = Math.sign(e.deltaY); // down=+1 (faster), up=-1 (slower)
+      speed = THREE.MathUtils.clamp(speed + dir*0.00022, minSpeed, maxSpeed);
+    }, {passive:true});
+
+    /* ----------------------- Palettes ----------------------- */
+    const palettes = [
+      { base: 0xE9D5C9, paints: [0xC0392B,0xD35400,0xF4D03F,0x8E44AD,0x2E86C1] },
+      { base: 0xC7D3E8, paints: [0x1F3A93,0x117A65,0x5E2D79,0x2E86C1,0xF39C12] },
+      { base: 0xDCDCDC, paints: [0x111111,0x5B5B5B,0x9E9E9E,0xB03A2E,0x1ABC9C] },
+      { base: 0xF2E9D0, paints: [0xC06C43,0x8B5A2B,0x1E8449,0x2E86C1,0x9B59B6] }
+    ].map(s => ({ baseColor:new THREE.Color(s.base), paintColors:s.paints.map(c=>new THREE.Color(c)) }));
+
+    /* ----------------------- Pottery generation ----------------------- */
+    const potterySet = [];
+    const RING = 6.0;
+
+    function sampleProfile(cps, samples=160){
+      const pts = cps.map(([x,y]) => new THREE.Vector2(x,y));
+      const curve = new THREE.CatmullRomCurve3(pts.map(v=>new THREE.Vector3(v.x, v.y, 0)), false, 'catmullrom', 0.5);
+      const out = [];
+      for (let i=0;i<=samples;i++){
+        const t = i/samples; const p = curve.getPoint(t);
+        out.push(new THREE.Vector2(Math.max(0.001,p.x), p.y));
       }
       out.sort((a,b)=>a.y-b.y);
-      const minY=out[0].y, maxY=out[out.length-1].y, scale=UNIFORM_H/(maxY-minY);
-      return out.map(p=>new THREE.Vector2(p.x, (p.y-minY)*scale));
+      return out;
     }
-    function baseTexture(hex){
-      const c=document.createElement('canvas'); c.width=c.height=1024; const ctx=c.getContext('2d');
-      ctx.fillStyle = `#${hex.toString(16).padStart(6,'0')}`; ctx.fillRect(0,0,c.width,c.height);
-      const t=new THREE.CanvasTexture(c); t.wrapS=t.wrapT=THREE.RepeatWrapping; t.colorSpace=THREE.SRGBColorSpace; t.anisotropy=8; return t;
-    }
-    function makePot(i,total){
-      const pts = profile();
-      const start = pts.map(p=>new THREE.Vector2(0.18,p.y));
-      const g0 = lathe(start), g1 = lathe(pts);
-      g0.morphAttributes={ position:[g1.attributes.position], normal:[g1.attributes.normal] };
-      const mat=new THREE.MeshPhysicalMaterial({ map:baseTexture(0xE9D5C9), roughness:0.34, metalness:0.02, clearcoat:1, clearcoatRoughness:0.06, morphTargets:true, morphNormals:true });
-      const m=new THREE.Mesh(g0,mat); m.castShadow=m.receiveShadow=true;
-      const ang = i/total * Math.PI*2; const radius = RING*(0.8+Math.random()*0.4);
-      m.position.set(Math.cos(ang)*radius,0,Math.sin(ang)*radius);
-      scene.add(m);
-      return {mesh:m, a:Math.random()*Math.PI*2};
-    }
-    for(let i=0;i<6;i++) pots.push(makePot(i,6));
 
-    /* ---------- Flame: standout + climax ---------- */
-    const strobe = document.getElementById('strobe');
-    function flash(){ strobe.classList.remove('flash'); void strobe.offsetWidth; strobe.classList.add('flash'); }
-
-    function flameTexture(hex){
-      const c=document.createElement('canvas'); c.width=c.height=256; const x=c.getContext('2d');
-      const col=new THREE.Color(hex); const rgb=v=>Math.round(v*255);
-      const g=x.createRadialGradient(128,170,12,128,128,128);
-      g.addColorStop(0,'rgba(255,255,255,.95)');
-      g.addColorStop(.25,`rgba(${rgb(col.r)},${rgb(col.g)},${rgb(col.b)},.92)`);
-      g.addColorStop(.6,`rgba(${rgb(col.r)},${rgb(col.g)},${rgb(col.b)},.25)`);
-      g.addColorStop(1,`rgba(${rgb(col.r)},${rgb(col.g)},${rgb(col.b)},0)`);
-      x.fillStyle=g; x.fillRect(0,0,256,256); const t=new THREE.CanvasTexture(c);
-      t.colorSpace=THREE.SRGBColorSpace; t.anisotropy=8; return t;
+    function getProfiles(){
+      const amphora = {baseScale:1.05, hasHandle:true, handleKind:'amphora',
+        cps:[[0.02,-1.55],[0.45,-1.52],[0.95,-1.35],[1.25,-0.95],[1.40,-0.55],[1.25,-0.15],[0.95,0.15],[0.80,0.45],[0.75,0.85],[0.95,1.10],[1.10,1.20],[0.95,1.30],[0.70,1.42]]};
+      const bulb = {baseScale:1.10, hasHandle:false,
+        cps:[[0.03,-1.35],[0.55,-1.30],[1.35,-0.95],[1.48,-0.25],[1.30,0.20],[0.95,0.60],[0.70,0.95],[0.65,1.15],[0.72,1.30]]};
+      const bottle = {baseScale:0.95, hasHandle:false,
+        cps:[[0.02,-1.70],[0.40,-1.65],[0.70,-1.10],[0.85,-0.70],[0.95,-0.20],[0.88,0.10],[0.70,0.40],[0.55,0.95],[0.48,1.40],[0.52,1.60]]};
+      const mug = {baseScale:1.15, hasHandle:true, handleKind:'mug',
+        cps:[[0.08,-1.00],[0.90,-0.98],[1.15,-0.85],[1.20,-0.10],[1.18,0.60],[1.05,0.85],[0.95,0.95],[1.10,1.00],[1.05,1.02]]};
+      return [amphora, bulb, bottle, mug];
     }
-    function ringTexture(){
+
+    function lathe(points){ const g = new THREE.LatheGeometry(points, RADIAL_SEGS); g.computeVertexNormals(); return g; }
+
+    function makeBasePaintTexture(baseColor){
+      const canvas = document.createElement('canvas'); canvas.width=TEXTURE_SIZE; canvas.height=TEXTURE_SIZE; const ctx=canvas.getContext('2d');
+      ctx.fillStyle = toCss(baseColor,1); ctx.fillRect(0,0,canvas.width,canvas.height);
+      // subtle speckle + micro-scratches
+      const speckles = Math.floor((canvas.width*canvas.height)*0.00015);
+      for(let i=0;i<speckles;i++){ const x=Math.random()*canvas.width, y=Math.random()*canvas.height, a=0.05+Math.random()*0.08; ctx.fillStyle=`rgba(0,0,0,${a})`; ctx.fillRect(x,y,1,1); }
+      for(let i=0;i<180;i++){
+        const x0=Math.random()*canvas.width, y0=Math.random()*canvas.height, x1=x0+(Math.random()-0.5)*60, y1=y0+(Math.random()-0.5)*40;
+        ctx.strokeStyle='rgba(255,255,255,0.02)'; ctx.lineWidth=.5; ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+      }
+      const tex = new THREE.CanvasTexture(canvas); tex.anisotropy=8; tex.wrapS=tex.wrapT=THREE.RepeatWrapping; tex.colorSpace=THREE.SRGBColorSpace; return { canvas, ctx, texture: tex };
+    }
+
+    function createPotterySet(){
+      const specs = getProfiles();
+      specs.forEach((spec, idx)=>{
+        const scheme = palettes[idx % palettes.length];
+        const baseColor = scheme.baseColor.clone();
+        const [colA, colB] = pickHarmonicPair(scheme.paintColors);
+
+        const sampled = sampleProfile(spec.cps);
+        const scale = spec.baseScale * (0.9 + Math.random()*0.2);
+        const scaled = sampled.map(p => new THREE.Vector2(p.x*scale, p.y*scale));
+        const minY = Math.min(...scaled.map(p=>p.y));
+        let targetPts = scaled.map(p => new THREE.Vector2(p.x, p.y - minY));
+        const yMax0 = targetPts[targetPts.length-1].y;
+        const sY = UNIFORM_POT_HEIGHT / yMax0;
+        targetPts = targetPts.map(p => new THREE.Vector2(p.x, p.y * sY));
+        const yMin = targetPts[0].y, yMax = targetPts[targetPts.length-1].y, yRange = yMax - yMin;
+        const maxR = Math.max(...targetPts.map(p=>p.x));
+        const startRadius = Math.max(0.12*scale, Math.min(0.22*scale, maxR*0.22));
+        const startPts = targetPts.map(p => new THREE.Vector2(startRadius, p.y));
+
+        const geomStart  = lathe(startPts);
+        const geomTarget = lathe(targetPts);
+        geomStart.morphAttributes = { position:[geomTarget.attributes.position], normal:[geomTarget.attributes.normal] };
+        geomStart.morphTargetsRelative = false;
+
+        const { texture } = makeBasePaintTexture(baseColor);
+        const mat = new THREE.MeshPhysicalMaterial({
+          map: texture, color: 0xffffff, roughness: 0.86, metalness: 0.02,
+          clearcoat: 0.0, clearcoatRoughness: 0.22, envMapIntensity: 0.85,
+          morphTargets: true, morphNormals: true, transparent: true, opacity: 0.0
+        });
+
+        const pot = new THREE.Mesh(geomStart, mat);
+        pot.castShadow = pot.receiveShadow = true;
+        pot.morphTargetInfluences = [0];
+
+        const angle = (idx/specs.length)*Math.PI*2 + (Math.random()-0.5)*0.25;
+        const radius = RING * (0.8 + Math.random()*0.4);
+        pot.position.set(Math.cos(angle)*radius, 0, Math.sin(angle)*radius);
+        scene.add(pot);
+
+        const wheelR = maxR * 1.3;
+        const wheel = new THREE.Mesh(
+          new THREE.CylinderGeometry(wheelR, wheelR, 0.02, 64),
+          new THREE.MeshStandardMaterial({ color: 0x222222, roughness:0.78 })
+        );
+        wheel.position.y = 0.01; wheel.receiveShadow = true; pot.add(wheel);
+
+        const coil = buildCoilMesh(targetPts, maxR); pot.add(coil);
+
+        potterySet.push({
+          mesh: pot, wheelMesh: wheel, coilMesh: coil,
+          latheTargetPoints: targetPts, yMin, yMax, yRange,
+          baseColor, paintA:colA.clone(), paintB:colB.clone(),
+          previousPaintColor: colA.clone(), targetPaintColor: colB.clone(), appliedPaintColor: colA.clone(),
+          colorTransitionProgress: 0.0, colorTransitionSpeed: 1/180,
+          paintAnimStep: Math.floor(Math.random()*1500*2),
+          currentPaintingDirection: Math.random()>0.5 ? 1 : -1,
+          stepsUntilColorChange: Math.floor(Math.random()*(320-160))+160,
+          hasHandlePlanned: !!spec.hasHandle, handleKind: spec.handleKind || 'mug',
+          handlesAttached: false,
+          coverageScan: 0.0, coverageSpeed: 0.017, coverageDone:false
+        });
+      });
+    }
+
+    function buildCoilMesh(pointsSorted, maxR){
+      const yMin = pointsSorted[0].y, yMax = pointsSorted[pointsSorted.length-1].y;
+      const yRange = yMax - yMin; const turns = 7, tubular = 800, coilRadius = Math.max(0.045*maxR, 0.06);
+      class Curve extends THREE.Curve { getPoint(t){
+        const y = yMin + t*yRange, angle = t * turns * Math.PI * 2.0, r = getRadiusAtY(y, pointsSorted) * 0.98;
+        return new THREE.Vector3(r*Math.cos(angle), y, r*Math.sin(angle));
+      }}
+      const path = new Curve();
+      const geom = new THREE.TubeGeometry(path, tubular, coilRadius, 16, false);
+      const mat = new THREE.MeshStandardMaterial({ color: 0x9c7e6b, roughness:0.9, transparent:true, opacity:1.0 });
+      const mesh = new THREE.Mesh(geom, mat);
+      mesh.castShadow = mesh.receiveShadow = true;
+      const count = geom.index ? geom.index.count : geom.attributes.position.count;
+      geom.setDrawRange(0, 0); mesh.userData._fullCount = count; return mesh;
+    }
+
+    function createCylindricalHandle(p, sideAngleRad = 0) {
+      const tubeR = (p.handleKind === 'mug') ? 0.07 : 0.06;
+      const bow = (p.handleKind === 'mug') ? 0.22 : 0.30;
+      const EPS = 0.002;
+      const yTop = p.yMax * 0.75, yBot = p.yMax * 0.40;
+      const rTop = getRadiusAtY(yTop, p.latheTargetPoints), rBot = getRadiusAtY(yBot, p.latheTargetPoints);
+      const out = new THREE.Vector3(Math.cos(sideAngleRad),0,Math.sin(sideAngleRad));
+      const p0 = out.clone().multiplyScalar(rTop + tubeR - EPS); p0.y = yTop;
+      const p2 = out.clone().multiplyScalar(rBot + tubeR - EPS); p2.y = yBot;
+      const mid = p0.clone().add(p2).multiplyScalar(0.5).add(out.clone().multiplyScalar(bow));
+      const curve = new THREE.QuadraticBezierCurve3(p0, mid, p2);
+      const tube  = new THREE.TubeGeometry(curve, 48, tubeR, 24, false);
+      const mat = p.mesh.material;
+      const handleTube = new THREE.Mesh(tube, mat); handleTube.castShadow = handleTube.receiveShadow = true;
+      const capGeo = new THREE.SphereGeometry(tubeR, 24, 16);
+      const capTop = new THREE.Mesh(capGeo, mat); capTop.position.copy(p0);
+      const capBot = new THREE.Mesh(capGeo, mat); capBot.position.copy(p2);
+      [capTop,capBot].forEach(m=>{m.castShadow=m.receiveShadow=true;});
+      const group = new THREE.Group(); group.add(handleTube, capTop, capBot); return group;
+    }
+
+    function maybeAttachHandles(){
+      potterySet.forEach(p=>{
+        if(!p.hasHandlePlanned || p.handlesAttached) return;
+        p.mesh.add(createCylindricalHandle(p,0), createCylindricalHandle(p,Math.PI));
+        p.handlesAttached = true;
+      });
+    }
+
+    function switchToGlazeMaterials(){
+      potterySet.forEach(p=>{
+        const m = p.mesh.material;
+        m.opacity = 1.0;
+        m.roughness = 0.32;
+        m.clearcoat = 1.0;
+        m.clearcoatRoughness = 0.06;
+        m.envMapIntensity = 1.05;
+      });
+    }
+
+    /* ----------------------- Flame (standout) ----------------------- */
+    let flameGroup=null, flameLight=null, flamePinned=false, strobeFired=false, kilnTime=0;
+    const FLAME_BASE_H = 1.6, FLAME_MAX_H = 3.6, FLAME_W = 1.6;
+    const FLAME_PEAK_DELAY_MS = 3500;
+    const ring = createShockwave(); scene.add(ring);
+
+    function makeFlameTexture(hex){
+      const c = document.createElement('canvas'); const sz=256; c.width=c.height=sz; const ctx=c.getContext('2d');
+      const col=new THREE.Color(hex); const rgb=x=>Math.round(x*255);
+      const g=ctx.createRadialGradient(sz*.5, sz*.65, sz*.05, sz*.5, sz*.5, sz*.5);
+      g.addColorStop(0,`rgba(255,255,255,.95)`); g.addColorStop(.25,`rgba(${rgb(col.r)},${rgb(col.g)},${rgb(col.b)},.92)`);
+      g.addColorStop(.6,`rgba(${rgb(col.r)},${rgb(col.g)},${rgb(col.b)},.25)`); g.addColorStop(1,`rgba(${rgb(col.r)},${rgb(col.g)},${rgb(col.b)},0)`);
+      ctx.fillStyle=g; ctx.fillRect(0,0,sz,sz);
+      const tex=new THREE.CanvasTexture(c); tex.colorSpace=THREE.SRGBColorSpace; tex.anisotropy=8; return tex;
+    }
+
+    function createFlame(){
+      const group = new THREE.Group(); group.position.set(0,1.2,0);
+      const layers = [
+        { color:0x64B5FF, w: FLAME_W*1.0, h: FLAME_BASE_H*1.0, speed:3.0, jitter:.15 },
+        { color:0x9E5BFF, w: FLAME_W*1.25, h: FLAME_BASE_H*1.2, speed:2.6, jitter:.18 },
+        { color:0xFFA03A, w: FLAME_W*1.45, h: FLAME_BASE_H*1.45, speed:2.0, jitter:.21 },
+        { color:0xFF5A4F, w: FLAME_W*1.75, h: FLAME_BASE_H*1.75, speed:1.6, jitter:.24 },
+      ];
+      layers.forEach((L,i)=>{
+        const mat = new THREE.SpriteMaterial({ map:makeFlameTexture(L.color), depthWrite:false, transparent:true, opacity:0, blending:THREE.AdditiveBlending });
+        const spr = new THREE.Sprite(mat);
+        spr.position.set(0, i*0.05, 0); spr.scale.set(L.w, L.h, 1);
+        spr.userData={baseW:L.w, baseH:L.h, speed:L.speed, jitter:L.jitter, t:Math.random()*6.28};
+        group.add(spr);
+      });
+      const core = new THREE.Sprite(new THREE.SpriteMaterial({ map:makeFlameTexture(0xFFFFFF), depthWrite:false, transparent:true, opacity:0, blending:THREE.AdditiveBlending }));
+      core.scale.set(0.7,1.0,1); core.position.set(0,0.12,0); core.userData={baseW:.7, baseH:1.0, speed:3.3, jitter:.1, t:Math.random()*6.28};
+      group.add(core);
+      flameLight = new THREE.PointLight(0xFF9A55, 0.0, 40, 2.0); flameLight.position.set(0,1.9,0); group.add(flameLight);
+      group.visible=false; return group;
+    }
+
+    function ensureFlame(){ if(!flameGroup){ flameGroup = createFlame(); scene.add(flameGroup); } }
+
+    function createShockwave(){
       const c=document.createElement('canvas'); c.width=c.height=256; const x=c.getContext('2d');
       const g=x.createRadialGradient(128,128,60,128,128,124);
       g.addColorStop(0,'rgba(255,255,255,.7)'); g.addColorStop(.6,'rgba(255,255,255,.25)'); g.addColorStop(1,'rgba(255,255,255,0)');
       x.fillStyle=g; x.beginPath(); x.arc(128,128,124,0,Math.PI*2); x.fill();
-      const t=new THREE.CanvasTexture(c); t.colorSpace=THREE.SRGBColorSpace; return t;
+      const t=new THREE.CanvasTexture(c); t.colorSpace=THREE.SRGBColorSpace;
+      const mat = new THREE.SpriteMaterial({ map:t, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, opacity:0.0 });
+      const spr = new THREE.Sprite(mat); spr.scale.set(0.1,0.1,1); spr.position.set(0,1.2,0); return spr;
     }
 
-    const flameGroup = new THREE.Group(); scene.add(flameGroup);
-    flameGroup.position.set(0,1.2,0);
-
-    const layers = [
-      { hex:0x64B5FF, w:1.6, h:1.6, speed:3.0, jitter:.15 },
-      { hex:0x9E5BFF, w:1.9, h:1.9, speed:2.6, jitter:.18 },
-      { hex:0xFFA03A, w:2.2, h:2.2, speed:2.0, jitter:.21 },
-      { hex:0xFF5A4F, w:2.6, h:2.6, speed:1.6, jitter:.24 },
-    ];
-    const sprites = layers.map(L=>{
-      const mat=new THREE.SpriteMaterial({ map:flameTexture(L.hex), transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, opacity:0.0 });
-      const s=new THREE.Sprite(mat); s.scale.set(L.w,L.h,1); s.userData={...L, t:Math.random()*6.28}; flameGroup.add(s); return s;
-    });
-    const flameLight = new THREE.PointLight(0xFF9A55, 0, 40, 2.0); flameLight.position.set(0,1.9,0); flameGroup.add(flameLight);
-
-    // Sparks
-    const sparkTex = (()=>{ const c=document.createElement('canvas'); c.width=c.height=64; const x=c.getContext('2d');
-      const g=x.createRadialGradient(32,32,1,32,32,32); g.addColorStop(0,'rgba(255,230,180,1)'); g.addColorStop(1,'rgba(255,230,180,0)');
-      x.fillStyle=g; x.beginPath(); x.arc(32,32,32,0,Math.PI*2); x.fill(); const t=new THREE.CanvasTexture(c); t.colorSpace=THREE.SRGBColorSpace; return t; })();
-    const sparkGeo = new THREE.BufferGeometry();
-    const N=480; const pos=new Float32Array(N*3), vel=new Float32Array(N*3), life=new Float32Array(N);
-    function respawn(i,big=false){
-      const ang=Math.random()*Math.PI*2, r=0.12+Math.random()*0.28;
-      pos[i*3+0]=Math.cos(ang)*r; pos[i*3+2]=Math.sin(ang)*r; pos[i*3+1]=0.8;
-      vel[i*3+0]=(Math.random()-0.5)*0.18*(big?2.0:1.0);
-      vel[i*3+2]=(Math.random()-0.5)*0.18*(big?2.0:1.0);
-      vel[i*3+1]=0.8 + Math.random()*1.6*(big?1.6:1.0);
-      life[i]=0.6 + Math.random()*1.3*(big?1.6:1.0);
+    function triggerStrobe(){
+      const el = document.getElementById('strobe');
+      el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
     }
-    for(let i=0;i<N;i++) respawn(i,true);
-    sparkGeo.setAttribute('position', new THREE.BufferAttribute(pos,3));
-    sparkGeo.setAttribute('velocity', new THREE.BufferAttribute(vel,3));
-    sparkGeo.setAttribute('life', new THREE.BufferAttribute(life,1));
-    const sparks = new THREE.Points(sparkGeo, new THREE.PointsMaterial({ size:0.06, map:sparkTex, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, opacity:.9, color:0xffddb0 }));
-    sparks.position.set(0,1.2,0); scene.add(sparks);
 
-    // Shockwave ring
-    const ringMat = new THREE.SpriteMaterial({ map:ringTexture(), transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, opacity:0.0 });
-    const ring = new THREE.Sprite(ringMat); ring.scale.set(0.1,0.1,1); ring.position.set(0,1.2,0); scene.add(ring);
+    /* ----------------------- Painting helpers ----------------------- */
+    const DRIP_PROBABILITY = 0.10, DRIP_MAX_LEN = 0.07;
 
-    // Floor
-    const floor = new THREE.Mesh(new THREE.PlaneGeometry(200,200), new THREE.ShadowMaterial({opacity:0.38}));
-    floor.rotation.x = -Math.PI/2; floor.position.y = 0.01; floor.receiveShadow = true; scene.add(floor);
+    function stampPaint(ctx,u,v,color,alpha=0.9){
+      const W=ctx.canvas.width, H=ctx.canvas.height, r=PAINT_BRUSH_RADIUS, px=u*W, py=v*H, pr=r*W;
+      const draw=(cx)=>{ const g=ctx.createRadialGradient(cx,py,0,cx,py,pr);
+        g.addColorStop(0,toCss(color,alpha)); g.addColorStop(.5,toCss(color,alpha*.6)); g.addColorStop(1,toCss(color,0));
+        ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,py,pr,0,Math.PI*2); ctx.fill();
+      };
+      draw(px); if(px<pr) draw(px+W); if(px>W-pr) draw(px-W);
+      if(Math.random()<DRIP_PROBABILITY){
+        const len=DRIP_MAX_LEN * H * (0.3 + Math.random()*0.7);
+        const w=pr*(0.35 + Math.random()*0.3);
+        const da=alpha*0.55;
+        const drip=(cx)=>{
+          const g=ctx.createLinearGradient(cx,py,cx,py+len);
+          g.addColorStop(0,toCss(color,da)); g.addColorStop(1,toCss(color,0));
+          ctx.fillStyle=g;
+          if(ctx.roundRect){ ctx.beginPath(); ctx.roundRect(cx-w*.5,py,w,len,w*.25); ctx.fill(); }
+          else { ctx.fillRect(cx-w*.5,py,w,len); }
+        };
+        drip(px); if(px<pr) drip(px+W); if(px>W-pr) drip(px-W);
+      }
+    }
 
-    /* ---------- Motion & behavior ---------- */
-    // camera auto-rotate; wheel speeds up/down (outside iframe)
-    let angle=0, speed=0.00032, baseSpeed=0.00032;
-    addEventListener('wheel', e=>{
-      const dir=Math.sign(e.deltaY);
-      speed = THREE.MathUtils.clamp(speed + dir*0.00022, 0.00005, 0.004);
-    }, {passive:true});
+    function strokePaint(ctx, u0,v0, u1,v1, color, width=3, alpha=0.35){
+      const W=ctx.canvas.width, H=ctx.canvas.height, x0=u0*W, y0=v0*H, x1=u1*W, y1=v1*H;
+      const mx=(x0+x1)/2 + (Math.random()-0.5)*W*0.06, my=(y0+y1)/2 + (Math.random()-0.5)*H*0.04;
+      ctx.strokeStyle=toCss(color,alpha); ctx.lineWidth=width*(0.6+Math.random()*0.8); ctx.lineCap='round'; ctx.lineJoin='round';
+      ctx.beginPath(); ctx.moveTo(x0,y0); ctx.quadraticCurveTo(mx,my,x1,y1); ctx.stroke();
+      if(x0<width||x1<width){ ctx.beginPath(); ctx.moveTo(x0+W,y0); ctx.quadraticCurveTo(mx+W,my,x1+W,y1); ctx.stroke(); }
+      if(x0>W-width||x1>W-width){ ctx.beginPath(); ctx.moveTo(x0-W,y0); ctx.quadraticCurveTo(mx-W,my,x1-W,y1); ctx.stroke(); }
+    }
 
-    // kiln curve → flame climax once
-    let tKiln=0, peaked=false;
-    function animate(){
-      requestAnimationFrame(animate);
-      const dt=clock.getDelta(); const now=performance.now();
+    function bandFill(ctx, vStart, vEnd, color, alpha=0.35){
+      const W=ctx.canvas.width, H=ctx.canvas.height, y0=Math.max(0,Math.min(H,vStart*H)), y1=Math.max(0,Math.min(H,vEnd*H));
+      const h=Math.max(1,y1-y0); const g=ctx.createLinearGradient(0,y0,0,y0+h);
+      g.addColorStop(0,toCss(color,alpha)); g.addColorStop(1,toCss(color,alpha*0.85));
+      ctx.fillStyle=g; ctx.fillRect(0,y0,W,h);
+    }
 
-      // Camera
-      angle += speed; speed = THREE.MathUtils.lerp(speed, baseSpeed, 0.01);
-      camera.position.set(Math.cos(angle)*22, 4, Math.sin(angle)*22);
-      camera.lookAt(0,1.2,0);
+    function ringPaint(ctx,v,color,thick=6){
+      const W=ctx.canvas.width, H=ctx.canvas.height, y=v*H;
+      const g=ctx.createLinearGradient(0,y,0,y+thick);
+      g.addColorStop(0,toCss(color,.75)); g.addColorStop(.5,toCss(color,.45)); g.addColorStop(1,toCss(color,0));
+      ctx.fillStyle=g; ctx.fillRect(0,y,W,thick);
+    }
 
-      // Pottery morph (subtle)
-      pots.forEach((p,i)=>{ const m=p.mesh; const k=0.65+0.35*Math.sin(now*0.0004 + i); m.morphTargetInfluences[0]=k; m.rotation.y += 0.003; });
+    /* ----------------------- Sparks & Dust ----------------------- */
+    const sparks = createSparks(480); scene.add(sparks.group);
+    const dust = createDustSystem(800); scene.add(dust);
 
-      // Flame build → peak
-      tKiln += dt;
-      const kilnEase = tKiln<8 ? (tKiln/8) : 1; // up in 8s then hold
-      // sprite wobble + opacity
-      sprites.forEach((s,idx)=>{
-        const d=s.userData; d.t += dt*d.speed;
-        const wobble = Math.sin(d.t)*d.jitter + (Math.random()-0.5)*d.jitter*0.5;
-        const w = d.w * (1.0 + wobble*0.45);
-        const h = d.h * (1.0 + wobble*0.85);
-        s.scale.set(w*(1.2+kilnEase*0.8), h*(1.2+kilnEase*1.2), 1);
-        s.position.y = 0.15 + s.scale.y*0.35;
-        s.material.opacity = THREE.MathUtils.lerp(s.material.opacity, 0.92, 0.12);
+    function softDiscTexture(){
+      const c = document.createElement('canvas'); c.width=c.height=64; const ctx=c.getContext('2d');
+      const grd = ctx.createRadialGradient(32,32,1,32,32,32);
+      grd.addColorStop(0,'rgba(255,255,255,1)'); grd.addColorStop(1,'rgba(255,255,255,0)');
+      ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(32,32,32,0,Math.PI*2); ctx.fill();
+      const tex=new THREE.CanvasTexture(c); tex.colorSpace=THREE.SRGBColorSpace; return tex;
+    }
+
+    function createDustSystem(count=800){
+      const g = new THREE.BufferGeometry(); const pos = new Float32Array(count*3); const vel = new Float32Array(count*3);
+      for(let i=0;i<count;i++){
+        const r = 14 + Math.random()*10, a = Math.random()*Math.PI*2;
+        pos[i*3+0]=Math.cos(a)*r; pos[i*3+1]=1+Math.random()*8; pos[i*3+2]=Math.sin(a)*r;
+        vel[i*3+0]=(Math.random()-0.5)*0.02; vel[i*3+1]=0.01+Math.random()*0.02; vel[i*3+2]=(Math.random()-0.5)*0.02;
+      }
+      g.setAttribute('position', new THREE.BufferAttribute(pos,3)); g.setAttribute('velocity', new THREE.BufferAttribute(vel,3));
+      const tex = softDiscTexture();
+      const m = new THREE.PointsMaterial({ size:0.08, map:tex, alphaMap:tex, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, opacity:0.08 });
+      const p = new THREE.Points(g,m); p.userData = { boundsY:[0.5, 10] }; return p;
+    }
+
+    function updateDust(dt){
+      if(!dust) return; const pos = dust.geometry.attributes.position.array, vel = dust.geometry.attributes.velocity.array;
+      const [ymin,ymax] = dust.userData.boundsY;
+      for(let i=0;i<vel.length/3;i++){
+        vel[i*3+0] += (Math.random()-0.5)*0.002;
+        vel[i*3+2] += (Math.random()-0.5)*0.002;
+        pos[i*3+0] += vel[i*3+0]*dt*60;
+        pos[i*3+1] += vel[i*3+1]*dt*60;
+        pos[i*3+2] += vel[i*3+2]*dt*60;
+        if(pos[i*3+1]>ymax) pos[i*3+1]=ymin;
+      }
+      dust.geometry.attributes.position.needsUpdate = true;
+      const kilnFactor = THREE.MathUtils.clamp((flameLight?.intensity||0)/2.0, 0.0, 1.0);
+      dust.material.opacity = 0.04 + 0.10*kilnFactor;
+    }
+
+    function createSparks(count=300){
+      const positions = new Float32Array(count*3);
+      const velocities = new Float32Array(count*3);
+      const life = new Float32Array(count);
+      const geo = new THREE.BufferGeometry();
+      for(let i=0;i<count;i++){ respawn(i,true); }
+      function respawn(i, randomY=false){
+        const ang = Math.random()*Math.PI*2, r = 0.12 + Math.random()*0.28;
+        positions[i*3+0] = Math.cos(ang)*r;
+        positions[i*3+2] = Math.sin(ang)*r;
+        positions[i*3+1] = randomY ? 0.6+Math.random()*1.2 : 0.6;
+        velocities[i*3+0] = (Math.random()-0.5)*0.18;
+        velocities[i*3+2] = (Math.random()-0.5)*0.18;
+        velocities[i*3+1] = 0.8 + Math.random()*1.6;
+        life[i] = 0.6 + Math.random()*1.3;
+      }
+      geo.setAttribute('position', new THREE.BufferAttribute(positions,3));
+      geo.setAttribute('velocity', new THREE.BufferAttribute(velocities,3));
+      geo.setAttribute('life', new THREE.BufferAttribute(life,1));
+      const tex = softDiscTexture();
+      const mat = new THREE.PointsMaterial({ size:0.06, map:tex, alphaMap:tex, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, opacity:.9, color:0xffddb0 });
+      const points = new THREE.Points(geo,mat); points.position.set(0,1.2,0);
+      return {
+        group: points, geo, update(dt, intensity=1){
+          const pos = geo.attributes.position.array, vel = geo.attributes.velocity.array, lf = geo.attributes.life.array;
+          for(let i=0;i<lf.length;i++){
+            lf[i] -= dt * (0.9 + intensity*0.7);
+            pos[i*3+0] += vel[i*3+0]*dt;
+            pos[i*3+1] += vel[i*3+1]*dt;
+            pos[i*3+2] += vel[i*3+2]*dt;
+            vel[i*3+1] -= dt*0.25;
+            if (lf[i] <= 0 || pos[i*3+1] > 4.0) respawn(i,false);
+          }
+          geo.attributes.position.needsUpdate = true;
+          points.material.opacity = 0.5 + 0.5*intensity;
+        }
+      }
+    }
+
+    /* ----------------------- Utility ----------------------- */
+    function toCss(c,a=1){ return `rgba(${(c.r*255)|0},${(c.g*255)|0},${(c.b*255)|0},${a})`; }
+    function easeInOutCubic(t){ return t<0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
+    function smoothstep(a,b,t){ t = Math.min(1, Math.max(0, (t-a)/(b-a))); return t*t*(3-2*t); }
+    function getRadiusAtY(targetY, pts){
+      targetY = Math.max(pts[0].y, Math.min(targetY, pts[pts.length-1].y));
+      for(let i=0;i<pts.length-1;i++){
+        const p1=pts[i], p2=pts[i+1];
+        if(targetY>=p1.y && targetY<=p2.y){
+          if(p1.y===p2.y) return p1.x;
+          const t=(targetY-p1.y)/(p2.y-p1.y);
+          return p1.x + t*(p2.x-p1.x);
+        }
+      }
+      return pts[pts.length-1].x;
+    }
+
+    function pickHarmonicPair(colors){
+      let best=[colors[0], colors[1]], bestScore=-1;
+      for(let i=0;i<colors.length;i++){ for(let j=i+1;j<colors.length;j++){
+        const ha=colors[i].clone().getHSL({}).h, hb=colors[j].clone().getHSL({}).h;
+        const d=Math.min(Math.abs(ha-hb), 1-Math.abs(ha-hb));
+        const score = 1 - Math.abs(d-0.25); // ~90° apart
+        if(score>bestScore){ best=[colors[i],colors[j]]; bestScore=score; }
+      }}
+      return best;
+    }
+
+    /* ----------------------- Phases ----------------------- */
+    function updateCoil(now){
+      const t = Math.min(1, (now - phaseStart) / COIL_DURATION_MS), dt = clock.getDelta();
+      potterySet.forEach(p=>{
+        const count = Math.floor(p.coilMesh.userData._fullCount * t);
+        p.coilMesh.geometry.setDrawRange(0, count);
+        p.mesh.rotation.y += 3.0*dt; p.wheelMesh.rotation.y += 8.0*dt;
       });
-      // light color flicker + intensity
+      if(t>0.65){ const a = smoothstep(0.65,0.95,t); potterySet.forEach(p=>{ p.mesh.material.opacity=a*0.999; }); }
+      if(t>=1){ phase=PHASE.SCULPT; phaseStart=now; }
+    }
+
+    function updateSculpt(now){
+      const tNorm = Math.min(1,(now-phaseStart)/SCULPT_DURATION_MS), t = easeInOutCubic(tNorm), dt = clock.getDelta();
+      potterySet.forEach(p=>{
+        p.mesh.morphTargetInfluences[0]=t; p.coilMesh.material.opacity=1.0-t; p.mesh.rotation.y+=2.0*dt; p.wheelMesh.rotation.y+=5.0*dt;
+        if(t>=1) p.coilMesh.visible=false;
+      });
+      if(tNorm>=1){ maybeAttachHandles(); phase=PHASE.PAUSE; phaseStart=now; }
+    }
+
+    function updatePause(now){
+      const dt=clock.getDelta();
+      potterySet.forEach(p=>{ p.mesh.rotation.y+=0.6*dt; p.wheelMesh.rotation.y+=1.4*dt; });
+      if(now-phaseStart>=DRYING_PAUSE_MS){ switchToGlazeMaterials(); phase=PHASE.PAINT; phaseStart=now; paintStart=now; }
+    }
+
+    function updatePaint(now){
+      const sinceStart = now - paintStart;
+      potterySet.forEach(p=>{
+        const ctx = p.mesh.material.map.image.getContext ? p.mesh.material.map.image.getContext('2d') : p.mesh.material.map.source.data.getContext('2d');
+        const tex = p.mesh.material.map;
+
+        // oscillate between two harmonized colors
+        if(--p.stepsUntilColorChange<=0){
+          const next = (p.targetPaintColor.equals(p.paintA)) ? p.paintB : p.paintA;
+          p.previousPaintColor.copy(p.appliedPaintColor); p.targetPaintColor.copy(next); p.colorTransitionProgress=0;
+          p.stepsUntilColorChange = Math.floor(Math.random()*(320-160))+160;
+        }
+        if(p.colorTransitionProgress<1){ p.colorTransitionProgress=Math.min(1,p.colorTransitionProgress+1/180); }
+        p.appliedPaintColor.copy(p.previousPaintColor).lerp(p.targetPaintColor,p.colorTransitionProgress);
+
+        // kaleidoscopic strokes around a sweeping band
+        p.paintAnimStep++; const steps=1500, stepInDir=p.paintAnimStep%steps, tDir=stepInDir/steps;
+        let curY; if(p.currentPaintingDirection===1) curY=p.yMin + tDir*p.yRange; else curY=p.yMax - tDir*p.yRange;
+        if(stepInDir===0&&p.paintAnimStep>0) p.currentPaintingDirection*=-1;
+
+        const centralAngle = tDir * 10 * Math.PI * 2; // fast rotations for intricate pattern
+        for(let k=0;k<NUM_KALEIDOSCOPE_POINTS;k++){
+          const angle = centralAngle + (k/NUM_KALEIDOSCOPE_POINTS)*Math.PI*2;
+          let u=(angle/(Math.PI*2))%1; if(u<0) u+=1; let v=(curY-p.yMin)/p.yRange;
+          const col=(k%2===0)?p.paintA:p.paintB;
+          stampPaint(ctx,u,v,col,.88);
+          if(Math.random()<0.5){ const u2=(u+(Math.random()*0.08+0.04))%1, v2=THREE.MathUtils.clamp(v+(Math.random()*0.08-0.04),0.02,0.98); strokePaint(ctx,u,v,u2,v2,col,2+Math.random()*4,0.35); }
+        }
+        if(Math.random()<0.08){ const v=Math.random()*0.88+0.06, ringCol=(Math.random()<0.5)?p.paintA:p.paintB; ringPaint(ctx,v,ringCol,4+Math.floor(Math.random()*6)); }
+
+        // ensure full coverage towards the end
+        if(sinceStart>COVERAGE_START_MS && !p.coverageDone){
+          const band=0.05, v0=p.coverageScan, c=(Math.floor(v0/band)%2===0)?p.paintA:p.paintB;
+          bandFill(ctx,v0,Math.min(1,v0+band),c,0.38);
+          const cols=14; for(let i=0;i<cols;i++){ const u=i/cols, v=v0+(Math.random()*band); stampPaint(ctx,u,v,c,0.5); }
+          p.coverageScan+=p.coverageSpeed; if(p.coverageScan>=1) p.coverageDone=true;
+        }
+        tex.needsUpdate=true;
+
+        p.mesh.rotation.y += 0.5*(1/60); p.wheelMesh.rotation.y += 1.0*(1/60);
+      });
+
+      if(sinceStart > KILN_TRIGGER_MS){ phase=PHASE.KILN; phaseStart=now; kilnTime=0; }
+    }
+
+    function updateKiln(now){
+      ensureFlame(); flameGroup.visible=true;
+      const t = Math.min(1,(now-phaseStart)/KILN_DURATION_MS), ease = easeInOutCubic(t);
+      heatPass.uniforms.time.value = now*0.0015; heatPass.uniforms.intensity.value = ease*0.9; bloomPass.strength = 0.35 + 0.95*ease;
+
+      potterySet.forEach(p=>{
+        const m=p.mesh.material; m.clearcoatRoughness=THREE.MathUtils.lerp(0.06,0.02,ease);
+        m.roughness=THREE.MathUtils.lerp(0.28,0.12,ease); m.envMapIntensity=THREE.MathUtils.lerp(1.0,1.25,ease);
+        m.emissive=new THREE.Color(0xFFB37A); m.emissiveIntensity=0.22*ease;
+        p.mesh.rotation.y += 0.35*(1/60); p.wheelMesh.rotation.y += 0.7*(1/60);
+      });
+
+      kilnTime += clock.getDelta();
+      const flicker = 0.8 + 0.2*Math.sin(kilnTime*13.7) + 0.08*(Math.random()-0.5);
+      // flame light flicker & color cycle (blue → orange mix)
       const c1=new THREE.Color(0x5AA8FF), c2=new THREE.Color(0xFFA860);
-      const mix=0.5+0.5*Math.sin(tKiln*4.7+Math.random()*0.5);
+      const mix=0.5+0.5*Math.sin(kilnTime*4.7+Math.random()*0.5);
       flameLight.color.copy(c1).lerp(c2, mix);
-      flameLight.intensity = 6.0 * (0.7 + 0.3*Math.sin(tKiln*15.3) + 0.15*(Math.random()-0.5));
-      flameLight.position.y = 1.4 + 0.12*Math.sin(tKiln*6.0);
-      bloomPass.strength = 0.35 + kilnEase*0.95;
-      heatPass.uniforms.time.value = now*0.0015;
-      heatPass.uniforms.intensity.value = kilnEase*0.9;
+      flameLight.intensity = (6.0 + 8.0*ease) * Math.max(0, flicker);
+      flameLight.position.y = 1.4 + 0.12*Math.sin(kilnTime*6.0);
 
-      // Sparks
-      const P=sparkGeo.attributes.position.array, V=sparkGeo.attributes.velocity.array, L=sparkGeo.attributes.life.array;
-      for(let i=0;i<N;i++){
-        L[i]-=dt*(0.9 + kilnEase*0.7);
-        P[i*3+0]+=V[i*3+0]*dt; P[i*3+1]+=V[i*3+1]*dt; P[i*3+2]+=V[i*3+2]*dt;
-        V[i*3+1]-=dt*0.25;
-        if(L[i]<=0 || P[i*3+1]>4.0) respawn(i,false);
+      // grow & wobble sprites
+      const elapsed = now - phaseStart;
+      let targetHeight = FLAME_BASE_H + ease*(FLAME_MAX_H-FLAME_BASE_H)*0.85;
+      if(elapsed > FLAME_PEAK_DELAY_MS || flamePinned){
+        targetHeight = FLAME_MAX_H;
+        if(!flamePinned && !strobeFired){ triggerStrobe(); strobeFired=true; bigSparkBurst(); ring.material.opacity=0.9; ring.scale.set(0.2,0.2,1); }
+        flamePinned=true;
       }
-      sparkGeo.attributes.position.needsUpdate=true;
-      sparks.material.opacity = 0.5 + 0.5*kilnEase;
+      flameGroup.children.forEach((spr, idx)=>{
+        const d=spr.userData||{speed:2,t:0,jitter:.1,baseW:1,baseH:1};
+        d.t += clock.getDelta()*d.speed;
+        const wobble = Math.sin(d.t)*d.jitter + (Math.random()-0.5)*d.jitter*0.5;
+        const w = d.baseW * (1.15 + wobble*0.55) * (1.0 + ease*0.8);
+        let h = d.baseH * (1.15 + wobble*0.9);
+        const base = targetHeight * (0.8 + idx*0.09);
+        h = flamePinned ? Math.max(h, base) : THREE.MathUtils.lerp(h, base, 0.15);
+        spr.scale.set(w, h, 1);
+        spr.position.y = 0.15 + h*0.35;
+        spr.material.opacity = THREE.MathUtils.lerp(spr.material.opacity, 0.92, 0.12);
+      });
 
-      // One-time climax (flash + big spark burst + shockwave) at ~3.5s
-      if(!peaked && tKiln>3.5){
-        peaked = true;
-        flash();
-        // boost sparks briefly
-        for(let i=0;i<N; i++){ V[i*3+0]*=1.8; V[i*3+1]*=2.2; V[i*3+2]*=1.8; }
-        // shockwave ring
-        ring.scale.set(0.2,0.2,1); ring.material.opacity=0.9;
-      }
-      // shockwave anim
+      // shockwave ring fade & expand
       if(ring.material.opacity>0.01){
+        const dt=clock.getDelta();
         ring.scale.x *= (1 + dt*3.2);
         ring.scale.y = ring.scale.x;
         ring.material.opacity = Math.max(0, ring.material.opacity - dt*1.2);
       }
 
+      sparks.update(clock.getDelta(), 0.6 + 0.4*ease);
+    }
+
+    function bigSparkBurst(){
+      const vel = sparks.geo.attributes.velocity.array;
+      for(let i=0;i<vel.length/3;i++){
+        vel[i*3+0] *= 1.8; vel[i*3+1] *= 2.2; vel[i*3+2] *= 1.8;
+      }
+    }
+
+    /* ----------------------- Init & Animate ----------------------- */
+    createPotterySet();
+
+    function onResize(){
+      camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth,innerHeight);
+      composer.setSize(innerWidth,innerHeight);
+      bloomPass.setSize(innerWidth,innerHeight);
+    }
+    addEventListener('resize', onResize);
+
+    function animate(){
+      requestAnimationFrame(animate);
+      const now=performance.now(); const dt=clock.getDelta();
+
+      // Camera orbit
+      angle += speed; speed = THREE.MathUtils.lerp(speed, baseSpeed, 0.01);
+      camera.position.set(Math.cos(angle)*22, 4, Math.sin(angle)*22);
+      camera.lookAt(0,1.2,0);
+
+      // Phase machine
+      if(phase===PHASE.COIL) updateCoil(now);
+      else if(phase===PHASE.SCULPT) updateSculpt(now);
+      else if(phase===PHASE.PAUSE) updatePause(now);
+      else if(phase===PHASE.PAINT) updatePaint(now);
+      else if(phase===PHASE.KILN) updateKiln(now);
+
+      updateDust(dt);
+
+      heatPass.uniforms.time.value = now*0.001;
       composer.render();
     }
     animate();
 
-    /* ---------- Resize & UX tweaks ---------- */
-    function onResize(){
-      renderer.setSize(innerWidth, innerHeight);
-      composer.setSize(innerWidth, innerHeight);
-      camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
-    }
-    addEventListener('resize', onResize);
+    /* ----------------------- Smoke tests (lightweight) ----------------------- */
+    (function smoke(){
+      try{
+        console.group('%cPottery Smoke Tests','color:#8bb7ff');
+        console.assert(typeof ensureFlame==='function','ensureFlame defined');
+        console.assert(typeof updateKiln==='function','updateKiln defined');
+        console.assert(typeof createCylindricalHandle==='function','handle creator defined');
+        console.groupEnd();
+      }catch(e){ console.warn('Smoke tests failed:',e); }
+    })();
 
-    // Let the foreground site scroll (inside the iframe), but still allow speed control:
-    // We can’t capture wheel events while pointer is inside the cross-origin iframe,
-    // so we also listen on the page itself (e.g., when cursor is over the margins/topbar).
-    // Tip to users in the hint (already shown in UI).
-    document.body.style.overflow = 'hidden'; // page won't scroll; site iframe scrolls itself
   </script>
 </body>
 </html>
