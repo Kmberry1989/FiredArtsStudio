@@ -11,12 +11,29 @@
         body {
             font-family: 'Inter', sans-serif;
             scroll-behavior: smooth;
-            overflow-x: hidden; 
-            background-color: #000000; 
-            color: #E5E7EB; 
+            overflow-x: hidden;
+            background-color: #000000;
+            color: #E5E7EB;
+        }
+        #pottery-bg-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+        #pottery-bg {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            pointer-events: none;
+            will-change: transform;
         }
         .hero-bg {
-            background-color: #000000; 
+            background-color: #000000;
         }
 
         .section-title {
@@ -433,7 +450,11 @@
 
     </style>
 </head>
-<body class="bg-black text-gray-200"> 
+<body class="bg-black text-gray-200">
+
+    <div id="pottery-bg-wrapper">
+        <iframe id="pottery-bg" src="pottery-stage.html"></iframe>
+    </div>
 
     <div id="logo-area" class="bg-black py-6 text-center shadow-sm">
         <div class="site-logo-container">
@@ -959,6 +980,19 @@
             });
         }
 
+    </script>
+
+    <script>
+        const potteryBg = document.getElementById('pottery-bg');
+        if (potteryBg) {
+            window.addEventListener('scroll', () => {
+                const offset = window.scrollY * 0.3;
+                potteryBg.style.transform = `translateY(${offset}px)`;
+            });
+            window.addEventListener('wheel', e => {
+                potteryBg.contentWindow?.postMessage({ type: 'wheel', deltaY: e.deltaY }, '*');
+            }, { passive: true });
+        }
     </script>
 </body>
 </html>
